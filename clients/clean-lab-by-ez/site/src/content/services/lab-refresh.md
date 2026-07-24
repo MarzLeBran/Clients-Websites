@@ -1,6 +1,7 @@
 ---
 name: "Lab Refresh"
 slug: "lab-refresh"
+serviceTier: "primary"
 isPrimary: true
 priceFrom: 79
 shortDescription: "A foam-cannon hand wash, wheel-and-tire clean, and full interior vacuum-and-wipe-down, done in your driveway starting at $79."

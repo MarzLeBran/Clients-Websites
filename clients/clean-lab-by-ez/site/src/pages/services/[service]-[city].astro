@@ -17,14 +17,21 @@ export async function getStaticPaths() {
   const services = await getCollection('services');
   const areas = await getCollection('areas');
 
-  return pages.map((page) => {
-    const service = services.find((s) => s.data.slug === page.data.serviceSlug);
-    const area = areas.find((a) => a.data.slug === page.data.citySlug);
-    return {
-      params: { service: page.data.serviceSlug, city: page.data.citySlug },
-      props: { page, service, area },
-    };
-  });
+  // City×service pages are for primary revenue services only — secondary
+  // and add-on tiers never get per-city URLs, even if an entry is authored.
+  return pages
+    .filter(
+      (page) =>
+        services.find((s) => s.data.slug === page.data.serviceSlug)?.data.serviceTier === 'primary'
+    )
+    .map((page) => {
+      const service = services.find((s) => s.data.slug === page.data.serviceSlug);
+      const area = areas.find((a) => a.data.slug === page.data.citySlug);
+      return {
+        params: { service: page.data.serviceSlug, city: page.data.citySlug },
+        props: { page, service, area },
+      };
+    });
 }
 
 const { page, service, area } = Astro.props;

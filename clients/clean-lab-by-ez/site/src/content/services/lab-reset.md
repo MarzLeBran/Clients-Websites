@@ -1,6 +1,7 @@
 ---
 name: "Lab Reset"
 slug: "lab-reset"
+serviceTier: "primary"
 isPrimary: true
 priceFrom: 125
 shortDescription: "The deep interior-and-exterior detail for a car that's been let go too long — stain extraction, odor elimination, and a full reset, starting at $125."

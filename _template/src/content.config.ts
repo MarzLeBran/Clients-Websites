@@ -6,6 +6,13 @@ const services = defineCollection({
   schema: z.object({
     name: z.string(),
     slug: z.string(),
+    // Drives page generation: 'primary' and 'secondary' each get a dedicated
+    // /services/[slug]/ page; 'addon' renders as a pricing card on the
+    // services index (#add-ons) and never gets a standalone URL. City×service
+    // pages are generated for 'primary' services only.
+    serviceTier: z.enum(['primary', 'secondary', 'addon']),
+    // Deprecated: superseded by serviceTier ('primary' ⇔ isPrimary). Kept so
+    // existing consumers don't break.
     isPrimary: z.boolean().default(false),
     priceFrom: z.number().optional(),
     shortDescription: z.string(),

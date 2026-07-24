@@ -7,6 +7,8 @@ import { site } from '../../config/site.config';
 import { getCollection } from 'astro:content';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const pageServices = services.filter((s) => s.data.serviceTier !== 'addon');
+const addons = services.filter((s) => s.data.serviceTier === 'addon');
 const url = new URL('/services/', Astro.site).toString();
 ---
 
@@ -15,9 +17,26 @@ const url = new URL('/services/', Astro.site).toString();
   <section class="px-6 py-16">
     <SectionHeading title="Services" />
     <div class="grid gap-6 md:grid-cols-3">
-      {services.map((s) => (
+      {pageServices.map((s) => (
         <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} />
       ))}
     </div>
+
+    {addons.length > 0 && (
+      <div id="add-ons" class="mt-16">
+        {/* "Additional services" is the flyer's own heading for these —
+            add-ons are cards here, never standalone pages. */}
+        <SectionHeading eyebrow="Add-Ons" title="Additional services" level="h2" />
+        <div class="grid gap-6 md:grid-cols-3">
+          {addons.map((s) => (
+            <div class="rounded-card border border-line bg-surface-raised p-6 shadow-card">
+              <h3 class="font-display text-display-md font-bold">{s.data.name}</h3>
+              <p class="mt-2 text-body">{s.data.shortDescription}</p>
+              {s.data.priceFrom && <p class="mt-4 font-utility text-mono text-brand-primary">From ${s.data.priceFrom}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 </BaseLayout>

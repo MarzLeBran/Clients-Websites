@@ -9,6 +9,9 @@ import { site } from '../config/site.config';
 import { getCollection } from 'astro:content';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+// Add-ons live on the services index as cards; the homepage grid links only
+// to services that have real pages.
+const pageServices = services.filter((s) => s.data.serviceTier !== 'addon');
 const testimonials = (await getCollection('testimonials')).slice(0, 3);
 ---
 
@@ -23,11 +26,11 @@ const testimonials = (await getCollection('testimonials')).slice(0, 3);
     </div>
   </section>
 
-  {services.length > 0 && (
+  {pageServices.length > 0 && (
     <section class="px-6 py-16">
       <SectionHeading eyebrow="Services" title="What we do" level="h2" />
       <div class="grid gap-6 md:grid-cols-3">
-        {services.map((s) => (
+        {pageServices.map((s) => (
           <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} />
         ))}
       </div>

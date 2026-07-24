@@ -22,10 +22,8 @@ const cityPages = await getCollection('cityServicePages');
 const url = new URL(`/service-areas/${area.data.slug}/`, Astro.site).toString();
 
 // Link to this city's actual city×service page when one exists (primary
-// tiers), falling back to the generic tier page for add-ons that don't have
-// per-city pages — without this, the area↔city×service graph edge never
-// existed and every area page pointed to the same 4 generic tier pages
-// regardless of city.
+// tiers), falling back to the generic tier page — and for add-ons, which
+// have no standalone page at all, to the services index's card section.
 const serviceLinks = services.map((s) => {
   const cityPage = cityPages.find(
     (p) => p.data.serviceSlug === s.data.slug && p.data.citySlug === area.data.slug
@@ -34,7 +32,9 @@ const serviceLinks = services.map((s) => {
     service: s,
     href: cityPage
       ? `/services/${s.data.slug}-${area.data.slug}/`
-      : `/services/${s.data.slug}/`,
+      : s.data.serviceTier === 'addon'
+        ? '/services/#add-ons'
+        : `/services/${s.data.slug}/`,
   };
 });
 

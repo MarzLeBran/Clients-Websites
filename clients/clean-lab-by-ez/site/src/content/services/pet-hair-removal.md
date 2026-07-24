@@ -1,6 +1,7 @@
 ---
 name: "Pet Hair Removal"
 slug: "pet-hair-removal"
+serviceTier: "addon"
 isPrimary: false
 priceFrom: 25
 shortDescription: "Pet hair worked out of seats, carpets, and mats — available on its own or added to any detail for $25."

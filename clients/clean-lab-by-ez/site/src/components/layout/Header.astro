@@ -17,6 +17,8 @@ const serviceMenuItems = await Promise.all(
   services.map(async (s) => ({
     name: s.data.name,
     slug: s.data.slug,
+    // Add-ons have no standalone page — send them to the index's card section.
+    href: s.data.serviceTier === 'addon' ? '/services/#add-ons' : `/services/${s.data.slug}/`,
     shortDescription: s.data.shortDescription,
     photo: s.data.heroImage ? await getOptimizedPhoto(s.data.heroImage as PhotoKey, 300) : null,
   }))
@@ -71,7 +73,7 @@ const navRest = [
             <div class="grid grid-cols-2 gap-2 rounded-card border border-line bg-surface-raised p-4 shadow-elevated">
               {serviceMenuItems.map((s) => (
                 <a
-                  href={`/services/${s.slug}/`}
+                  href={s.href}
                   role="menuitem"
                   class="flex items-center gap-3 rounded-button p-2 transition-colors duration-fast hover:bg-surface"
                 >

@@ -32,7 +32,7 @@ export const site = {
     emergencyService: boolean,
   },
   areas: [ { city, state, slug, county, blurb } ],
-  services: [ { name, slug, isPrimary, priceFrom } ],
+  services: [ { name, slug, isPrimary, priceFrom } ],  // form options + pricing only — page generation is driven by the services *collection*'s serviceTier field ('primary' | 'secondary' | 'addon')
   social: { google, facebook, instagram, tiktok, yelp },
   booking: { provider, embedUrl, mode },  // 'calendly'|'ghl'|'google'|'none'
   forms: { webhookUrl, smsConsentRequired: true },

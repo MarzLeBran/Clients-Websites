@@ -1,6 +1,7 @@
 ---
 name: "Engine Bay Cleaning"
 slug: "engine-bay-cleaning"
+serviceTier: "addon"
 isPrimary: false
 shortDescription: "Engine bay cleaning, offered as a custom add-on and priced by quote since it isn't on our printed price list."
 heroImage: "truck-exterior-detail"

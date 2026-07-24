@@ -15,10 +15,14 @@ import { getOptimizedPhoto, getGalleryPhotos, ALL_PHOTO_KEYS, type PhotoKey } fr
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
-  return services.map((service) => ({
-    params: { slug: service.data.slug },
-    props: { service },
-  }));
+  // Add-ons never get standalone pages — they render as pricing cards on
+  // the services index (#add-ons) so no thin/orphan URLs exist.
+  return services
+    .filter((service) => service.data.serviceTier !== 'addon')
+    .map((service) => ({
+      params: { slug: service.data.slug },
+      props: { service },
+    }));
 }
 
 const { service } = Astro.props;

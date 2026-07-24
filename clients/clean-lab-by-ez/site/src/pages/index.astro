@@ -14,7 +14,7 @@ import { getGalleryPhotos, ALL_PHOTO_KEYS } from '../lib/photos';
 import heroImg from '../assets/photos/black-vehicle-detailing.jpg';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-const tiers = services.filter((s) => s.data.isPrimary);
+const tiers = services.filter((s) => s.data.serviceTier === 'primary');
 const areas = await getCollection('areas');
 
 // Per brief/00-audit.md's "Strong" list — real work photos, not stock.
@@ -104,8 +104,8 @@ const hexPattern =
         ))}
       </div>
       <div class="mt-6 flex flex-wrap gap-4 text-utility">
-        {services.filter((s) => !s.data.isPrimary).map((s) => (
-          <a href={`/services/${s.data.slug}/`} class="text-text-muted hover:text-brand-primary">
+        {services.filter((s) => s.data.serviceTier === 'addon').map((s) => (
+          <a href="/services/#add-ons" class="text-text-muted hover:text-brand-primary">
             + {s.data.name}
           </a>
         ))}

@@ -56,7 +56,7 @@ const navRest = [
               <div class="grid grid-cols-2 gap-2 rounded-card border border-line bg-surface-alt p-4 shadow-card">
                 {services.map((s) => (
                   <a
-                    href={`/services/${s.data.slug}/`}
+                    href={s.data.serviceTier === 'addon' ? '/services/#add-ons' : `/services/${s.data.slug}/`}
                     role="menuitem"
                     class="flex items-center gap-3 rounded-button p-2 transition-colors duration-fast hover:bg-surface"
                   >
