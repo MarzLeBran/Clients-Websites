@@ -9,14 +9,13 @@ import { site } from '../../config/site.config';
 
 const businessName = site.business.displayName;
 const phone = site.business.phoneE164 || site.business.phone;
-const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== 'PENDING';
 ---
 
 <div class="rounded-card bg-surface-alt p-6 shadow-card">
   <p class="font-display text-display-sm font-bold">Get a Free Quote</p>
   <p class="mt-1 text-utility">We'll text you back — usually within minutes.</p>
 
-  <form class="mt-5 space-y-3" data-lead-form data-mode={site.mode} data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''} data-fallback-phone={phone}>
+  <form class="mt-5 space-y-3" data-lead-form data-mode={site.mode} data-endpoint={site.forms.endpoint} data-fallback-phone={phone}>
     <label class="block">
       <span class="sr-only">Name</span>
       <input type="text" name="name" required placeholder="Name" class="w-full rounded-button border border-neutral-100 px-3 py-2.5" />
@@ -40,7 +39,8 @@ const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== '
       <label class="flex items-start gap-2 text-utility">
         <input type="checkbox" name="smsConsent" checked={false} required class="mt-0.5 accent-brand-primary" />
         <span>
-          <span aria-hidden="true">*</span><span class="sr-only">(required)</span> I agree to receive texts from {businessName} about my request. Msg &amp; data rates may apply. Reply STOP to opt out. See <a href="/privacy/" class="underline">Privacy</a> &amp; <a href="/terms/" class="underline">Terms</a>.
+          <span aria-hidden="true">*</span><span class="sr-only">(required)</span>
+          <span data-consent-language>I agree to receive texts from {businessName} about my request. Msg &amp; data rates may apply. Reply STOP to opt out. See <a href="/privacy/" class="underline">Privacy</a> &amp; <a href="/terms/" class="underline">Terms</a>.</span>
         </span>
       </label>
     )}

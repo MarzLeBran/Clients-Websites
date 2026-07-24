@@ -14,7 +14,7 @@ The non-negotiable half. Surface changes client to client; none of this does.
 - **Content collections** for services, areas, blog, team, testimonials, faqs
 - `@astrojs/sitemap`, `astro:assets` for image optimization
 - **Islands only for:** chat widget, mobile nav, lightbox, before/after slider, booking embed. Everything else ships zero JS.
-- Deploy: Netlify or Cloudflare Pages. Forms post to a GHL webhook.
+- Deploy: Cloudflare Pages (or Netlify/Vercel). Forms build a normalized `Lead` DTO (`src/lib/lead.ts`) and POST it as JSON to the same-origin proxy (`functions/api/lead.ts` → `/api/lead`), which validates, stamps consent timestamp/IP, and forwards to GHL. A browser can never POST to a GHL webhook directly — CORS preflight kills it silently.
 
 ## site.config.ts
 
@@ -35,7 +35,7 @@ export const site = {
   services: [ { name, slug, isPrimary, priceFrom } ],  // form options + pricing only — page generation is driven by the services *collection*'s serviceTier field ('primary' | 'secondary' | 'addon')
   social: { google, facebook, instagram, tiktok, yelp },
   booking: { provider, embedUrl, mode },  // 'calendly'|'ghl'|'google'|'none'
-  forms: { webhookUrl, smsConsentRequired: true },
+  forms: { endpoint, smsConsentRequired: true },  // endpoint = same-origin proxy path ('/api/lead'); the GHL webhook URL lives ONLY in the GHL_WEBHOOK_URL server env secret, never in this file or the client bundle
   chat: { enabled, mode },                // 'faq'|'faq-booking'|'off'
   tracking: { ga4, gtm, callRailSwapTarget },
   seo: { defaultTitle, defaultDescription, ogImage },
@@ -159,7 +159,7 @@ Visible keyboard focus (real states, not the default ring removed) · semantic l
 - [ ] All facts in `site.config.ts` match intake exactly
 - [ ] NAP matches Google Business Profile character for character
 - [ ] `tel:` links dial correctly on a real phone
-- [ ] Form submits to GHL webhook; test lead received
+- [ ] Form submits through the `/api/lead` proxy (GHL_WEBHOOK_URL secret set on the host); test lead received in GHL with consent record + UTMs
 - [ ] SMS consent checkbox present, unchecked, full language
 - [ ] Privacy and Terms live, linked from footer and forms
 - [ ] Booking embed completes a real booking

@@ -49,7 +49,11 @@ export interface SiteConfig {
     mode: string;
   };
   forms: {
-    webhookUrl: string;
+    // Same-origin proxy path (functions/api/lead.ts). The real GHL webhook
+    // URL lives ONLY in the GHL_WEBHOOK_URL server env secret — it must
+    // never appear here, in any component, or anywhere in the client
+    // bundle. Empty string → forms show the visible call/text fallback.
+    endpoint: string;
     smsConsentRequired: boolean;
   };
   chat: {
@@ -107,7 +111,7 @@ export const site: SiteConfig = {
     mode: '',
   },
   forms: {
-    webhookUrl: '',
+    endpoint: '/api/lead', // inert until deployed with the bundled proxy + secret
     smsConsentRequired: true,
   },
   chat: {
