@@ -23,7 +23,7 @@ if [ -d "$DEST" ]; then
   exit 1
 fi
 
-for d in intake assets/photos assets/logo assets/reviews assets/existing brief; do
+for d in intake assets/photos assets/logo assets/reviews assets/existing-site brief; do
   mkdir -p "$DEST/$d"
 done
 
@@ -36,6 +36,7 @@ else
 fi
 
 cp "$ROOT/_system/intake-form.md" "$DEST/intake/intake-form-BLANK.md" 2>/dev/null || true
+cp "$ROOT/_system/intake-demo.md" "$DEST/intake/intake-demo-BLANK.md" 2>/dev/null || true
 
 cat > "$DEST/README.md" <<EOF
 # $NAME
@@ -44,11 +45,11 @@ cat > "$DEST/README.md" <<EOF
 - Created: $(date +%Y-%m-%d)
 
 ## Drop assets here before starting
-- \`intake/\` — completed intake form, call notes
-- \`assets/photos/\` — everything from their social, GBP, phone
-- \`assets/logo/\` — vector preferred
+- \`intake/\` — intake-demo (minimal, for a demo spin) or intake-form (full, for production), plus call notes
+- \`assets/photos/\` — everything from their social, GBP, phone; kebab-case names
+- \`assets/logo/\` — transparent PNG required; hand-built SVG welcome; auto-traced SVG exports rejected
 - \`assets/reviews/\` — exported Google reviews
-- \`assets/existing/\` — screenshots of current site
+- \`assets/existing-site/\` — screenshots of current site / flyers
 
 ## Pipeline
 \`/new-client $SLUG\` → \`/brand-read $SLUG\` → \`/directions $SLUG\` → \`/architect $SLUG\` → \`/build-site $SLUG\` → \`/ship $SLUG\`

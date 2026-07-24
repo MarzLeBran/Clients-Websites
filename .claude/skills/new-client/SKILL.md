@@ -10,13 +10,18 @@ Onboard a new client: $ARGUMENTS
 
 ## 1. Scaffold
 
-Run `./scripts/new-client.sh <slug>`. It creates `clients/<slug>/` with `intake/`, `assets/{photos,logo,reviews,existing}/`, `brief/`, and copies `_template/` to `site/`.
+Run `./scripts/new-client.sh <slug>`. It creates `clients/<slug>/` with `intake/`, `assets/{photos,logo,reviews,existing-site}/`, `brief/`, and copies `_template/` to `site/`.
 
-If the operator hasn't dropped assets in yet, stop and tell them what to put where.
+If the operator hasn't dropped assets in yet, stop and tell them what to put where. **Reject auto-traced SVG logo exports at intake** (thousands of paths from a raster trace); require a transparent PNG, welcome a hand-built SVG.
 
 ## 2. Read the intake
 
-Read everything in `clients/<slug>/intake/`. If there's no completed form, point them at `_system/intake-form.md` and stop — the audit is worthless without it.
+Read everything in `clients/<slug>/intake/`. Two tiers:
+
+- **Demo spin** — `_system/intake-demo.md` filled in is enough: business name, phone, primary services, logo, one brand color, optional photos. Everything else defaults; `mode: 'demo'` mocks all integrations. Theme with `scripts/derive-tokens.py`.
+- **Production build** — requires the full structured `_system/intake-form.md`. Every YAML field carries `status: confirmed | quote | PENDING`; **PENDING ships blank/flagged automatically — never guessed.**
+
+If neither exists, point them at the forms and stop — the audit is worthless without one.
 
 ## 3. Audit the assets
 
