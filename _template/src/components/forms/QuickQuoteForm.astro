@@ -37,12 +37,20 @@ const phone = site.business.phoneE164 || site.business.phone;
 
     {site.forms.smsConsentRequired && (
       <label class="flex items-start gap-2 text-utility">
-        <input type="checkbox" name="smsConsent" checked={false} required class="mt-0.5 accent-brand-primary" />
+        {/* No native `required`: lead-form.ts validates on submit with
+            aria-invalid + a visible inline error instead of the browser
+            tooltip. Still hardcoded unchecked — never default-checked. */}
+        <input type="checkbox" name="smsConsent" checked={false} class="mt-0.5 accent-brand-primary" />
         <span>
           <span aria-hidden="true">*</span><span class="sr-only">(required)</span>
           <span data-consent-language>I agree to receive texts from {businessName} about my request. Msg &amp; data rates may apply. Reply STOP to opt out. See <a href="/privacy/" class="underline">Privacy</a> &amp; <a href="/terms/" class="underline">Terms</a>.</span>
         </span>
       </label>
+    )}
+    {site.forms.smsConsentRequired && (
+      <p data-consent-error hidden role="alert" class="text-utility">
+        You must agree to receive text messages so we can reply to your quote.
+      </p>
     )}
 
     <div data-form-status role="status" aria-live="polite" class="hidden text-utility"></div>

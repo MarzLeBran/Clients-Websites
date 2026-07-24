@@ -1,0 +1,9 @@
+---
+// The one canonical brand lockup — Header and Footer both render this
+// component so the mark and its treatment can never drift apart. Replace
+// the text with the client's real logo assets at Stage 5 (see a client
+// site for an image-lockup example) but keep it a single component.
+import { site } from '../../config/site.config';
+---
+
+<span class="font-display text-display-md font-bold">{site.business.displayName}</span>

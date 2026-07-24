@@ -4,6 +4,9 @@
 // vehicle-tier pricing from site.config.ts — never hardcode prices here.
 // Implements the full ARIA APG Tabs pattern (roving tabindex, arrow-key
 // navigation, aria-controls/tabpanel) — caught incomplete at Stage 6 QA.
+// Tabs (not radiogroup) is deliberate: this selector only switches which
+// prices are DISPLAYED — its value is never submitted with the quote form.
+// If it ever feeds a form field, it must become role="radiogroup".
 import { site } from '../../config/site.config';
 
 const tiered = site.services.filter((s) => s.pricingByVehicle);

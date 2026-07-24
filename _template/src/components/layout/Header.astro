@@ -9,6 +9,7 @@ import { site } from '../../config/site.config';
 import { telHref, formatPhone } from '../../lib/format';
 import { getCollection } from 'astro:content';
 import CTAButton from '../ui/CTAButton.astro';
+import Logo from './Logo.astro';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
@@ -26,18 +27,21 @@ const navRest = [
   data-header
 >
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-    <a href="/" class="font-display text-display-md font-bold">
-      {site.business.displayName}
+    <a href="/" class="flex items-center">
+      <Logo />
     </a>
     <nav class="hidden gap-6 md:flex" aria-label="Primary">
       <ul class="flex items-center gap-6">
         {services.length > 0 ? (
           <li class="relative" data-mega-menu>
+            {/* Disclosure pattern, not role="menu": this is a set of nav
+                links, so a button with aria-expanded/aria-controls is the
+                correct semantic. The closed panel is display:none (`hidden`),
+                so its links are unreachable by Tab without extra wiring. */}
             <button
               type="button"
               class="flex min-h-11 items-center gap-1.5 text-body hover:text-brand-primary"
               aria-expanded="false"
-              aria-haspopup="true"
               aria-controls="services-mega-menu"
               data-mega-menu-trigger
             >
@@ -48,8 +52,6 @@ const navRest = [
             </button>
             <div
               id="services-mega-menu"
-              role="menu"
-              aria-label="Services"
               class="absolute left-1/2 top-full hidden w-[640px] -translate-x-1/2 pt-3"
               data-mega-menu-panel
             >
@@ -57,7 +59,6 @@ const navRest = [
                 {services.map((s) => (
                   <a
                     href={s.data.serviceTier === 'addon' ? '/services/#add-ons' : `/services/${s.data.slug}/`}
-                    role="menuitem"
                     class="flex items-center gap-3 rounded-button p-2 transition-colors duration-fast hover:bg-surface"
                   >
                     {s.data.heroImage && (
@@ -166,7 +167,12 @@ const navRest = [
       hoverTimer = setTimeout(() => setOpen(false), 150);
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape' && menuTrigger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        // Escape returns focus to the trigger so keyboard users aren't
+        // dropped on a now-hidden element.
+        menuTrigger.focus();
+      }
     });
     document.addEventListener('click', (e) => {
       if (!menuRoot.contains(e.target as Node)) setOpen(false);

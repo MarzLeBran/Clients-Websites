@@ -96,6 +96,19 @@
       animation: shine-sweep 4.5s ease-in-out 1s infinite;
     }
   }
+  /* High Contrast / forced-colors: background-clip:text paints the word
+     with its background, which forced-colors strips to none — the word
+     would vanish entirely. Restore a solid system color and drop the
+     effect. */
+  @media (forced-colors: active) {
+    .text-shine {
+      background-image: none;
+      -webkit-background-clip: initial;
+      background-clip: initial;
+      color: CanvasText;
+      animation: none;
+    }
+  }
 
   /* Button primary-hover shimmer sweep */
   @keyframes btn-sweep {

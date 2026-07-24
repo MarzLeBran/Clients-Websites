@@ -12,8 +12,27 @@ export function initLeadForms(selector = '[data-lead-form]') {
     if (form.dataset.leadFormBound === 'true') return;
     form.dataset.leadFormBound = 'true';
 
+    // Consent is validated here, not with the native `required` tooltip —
+    // the browser bubble is easy to miss and isn't announced consistently.
+    // Checking the box clears the error state immediately.
+    const consent = form.querySelector<HTMLInputElement>('input[name="smsConsent"]');
+    const consentError = form.querySelector<HTMLElement>('[data-consent-error]');
+    consent?.addEventListener('change', () => {
+      if (consent.checked) {
+        consent.removeAttribute('aria-invalid');
+        if (consentError) consentError.hidden = true;
+      }
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      if (consent && !consent.checked) {
+        consent.setAttribute('aria-invalid', 'true');
+        if (consentError) consentError.hidden = false;
+        consent.focus();
+        return;
+      }
       // Demo mode never submits anywhere, even if an endpoint is configured
       // — the visible call/text fallback is the mock.
       const isDemo = form.dataset.mode === 'demo';

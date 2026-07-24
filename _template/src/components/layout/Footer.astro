@@ -1,6 +1,7 @@
 ---
 import { site } from '../../config/site.config';
 import { formatPhone, formatHours, telHref } from '../../lib/format';
+import Logo from './Logo.astro';
 
 const socialLinks = Object.entries(site.social).filter(([, url]) => url);
 ---
@@ -8,7 +9,7 @@ const socialLinks = Object.entries(site.social).filter(([, url]) => url);
 <footer class="bg-neutral-900 text-neutral-50 px-6 py-12">
   <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
     <div>
-      <p class="font-display text-display-md font-bold">{site.business.displayName}</p>
+      <p><Logo /></p>
       {site.business.tagline && <p class="text-body">{site.business.tagline}</p>}
     </div>
     <div>
