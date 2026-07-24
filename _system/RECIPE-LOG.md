@@ -1,10 +1,8 @@
 # Recipe Log
 
-The anti-repetition ledger. **Read before every Stage 2. Append after every build.**
+A record of what was built — **documentation, not a constraint**. Append a row after every build.
 
-Rule: within a vertical, never repeat the hero archetype or the services layout. Across the whole roster, never repeat a full combination of hero + services + type direction.
-
-If a vertical's menu starts feeling exhausted, that's a signal to extend the menu in the `design-playbook` skill — not to repeat.
+Repetition is allowed: choose the layout that converts best for the vertical, even if a prior client used it. Brand color, logo, photos, services, and copy differentiate sites naturally. This log exists so the studio can see its own patterns, not to forbid them.
 
 | Date | Client | Vertical | Photo grade | Hero | Services | Nav | Type direction | Signature element |
 |------|--------|----------|-------------|------|----------|-----|----------------|-------------------|

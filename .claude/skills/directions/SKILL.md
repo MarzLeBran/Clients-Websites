@@ -10,14 +10,13 @@ Design directions for: $ARGUMENTS
 ## Before you write anything
 
 1. Read `brief/00-audit.md` and `brief/01-brand-read.md`.
-2. Read `_system/RECIPE-LOG.md`. **This is the anti-repetition gate.**
-3. Load the `design-playbook` skill for the menus, the vertical library, and the banned list.
+2. Load the `design-playbook` skill for the menus, the vertical library, and the banned list.
 
 ## The bar
 
 Directions must differ **structurally**, not chromatically. Two directions sharing a hero archetype and a services layout are one direction in two palettes — that's a failure, and it's the default failure mode.
 
-Never propose a hero archetype or services layout already logged for this vertical.
+Repetition across the roster is allowed: pick the layout that converts best for this vertical, even if a prior client used it. Brand color, logo, photos, services, and copy differentiate sites naturally — never contort a direction just to avoid a layout someone else got.
 
 ## Each direction
 
@@ -36,12 +35,11 @@ Never propose a hero archetype or services layout already logged for this vertic
 
 Run this honestly and revise anything that fails:
 
-1. If a similar brief arrived tomorrow, would I land here again? Then it's a default, not a choice.
+1. If a similar brief arrived tomorrow, would I land here again? Then it's a default, not a choice — make it a choice or own it as the converting pattern.
 2. Do these differ structurally, or is it one direction in three palettes?
 3. Does the design come from this trade's actual world, or from "modern website"?
-4. Did I check the recipe log?
-5. Is there exactly one signature element carrying the boldness, everything else disciplined?
-6. What's the one thing I should remove?
+4. Is there exactly one signature element carrying the boldness, everything else disciplined?
+5. What's the one thing I should remove?
 
 Write `brief/02-design-directions.md` and present a summary in chat.
 

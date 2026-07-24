@@ -22,7 +22,7 @@ Any error or type failure is a hard stop.
 Dispatch simultaneously:
 - `seo-auditor` — schema, meta, NAP consistency, internal linking, sitemap
 - `a11y-auditor` — contrast, focus states, semantics, labels, reduced motion
-- `design-critic` — banned defaults, recipe-log collision, direction fidelity
+- `design-critic` — banned defaults, direction fidelity
 
 ## 3. Facts check
 

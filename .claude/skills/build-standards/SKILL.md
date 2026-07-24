@@ -48,7 +48,7 @@ export const site = {
 |---|---|---|
 | Home | `/` | |
 | Services index | `/services/` | |
-| Service detail | `/services/[slug]/` | 600+ words, own FAQ, own CTA. Not a stub |
+| Service detail | `/services/[slug]/` | Primary/secondary tiers only — own FAQ, own CTA, depth per the content-depth guidance below. Add-ons render as cards on the services index, not standalone pages |
 | Areas index | `/service-areas/` | |
 | Area | `/service-areas/[city]/` | |
 | City × service | `/services/[service]-[city]/` | The revenue pages |
@@ -61,6 +61,17 @@ export const site = {
 | 404 | | Route somewhere useful |
 
 Optional by vertical: `/blog/`, `/team/[name]/`, `/gallery/`, `/financing/`, `/careers/`, `/es/`
+
+### Content depth — guidance, never a gate
+
+Governing rule: **complete coverage using verified information.** Never pad and
+never fabricate to hit a count — a shorter honest page beats a padded one, and
+no QA check anywhere enforces a word count.
+
+- Primary revenue services: ~600–1000 words *when verified material supports it*
+- Secondary services: ~350–700 words
+- Add-on services: ~150–350 words, rendered as a card/module on the services
+  index (plus an optional FAQ entry) rather than a standalone page
 
 ## Conversion architecture
 

@@ -66,7 +66,7 @@ CLAUDE.md                    always-loaded constitution
     check-hardcoded-nap.sh   warns on business facts outside site.config.ts
 _system/
   intake-form.md             what you send clients
-  RECIPE-LOG.md              anti-repetition ledger
+  RECIPE-LOG.md              build log (documentation, not a constraint)
 _template/                   your Astro starter
 clients/                     one directory per client
 ```
@@ -77,7 +77,7 @@ clients/                     one directory per client
 
 **The photo library never enters the main context.** A client folder holds 50+ images. Reading them inline would consume the context you need for the actual build. `brand-analyst` reads them in an isolated window and returns one page: photo grade, extracted brand colors, usable files by name, missing info. The grade then drives the whole design strategy — A-grade libraries get photo-forward layouts, C-grade get type-driven ones. Since no two clients have the same photos, this is the strongest natural source of variation in the system.
 
-**The recipe log is a real file in git.** Every build appends its hero archetype, services layout, nav, and type direction. `/directions` reads it before proposing, and `design-critic` cross-references it during QA. Without it, session twelve quietly rebuilds session three.
+**The recipe log is documentation.** Every build appends its hero archetype, services layout, nav, and type direction so the studio can see its own patterns over time. It is not a constraint — repeating a prior client's recipe is allowed whenever it's the layout that converts for the vertical; brand color, logo, photos, and copy differentiate sites naturally.
 
 ## Hook dependencies
 
@@ -85,6 +85,6 @@ The hooks parse JSON with `node`, which Astro requires anyway — no `jq` needed
 
 ## Extending it
 
-Verticals accumulate. When a vertical's menu in the `design-playbook` skill starts feeling exhausted, add archetypes rather than repeating them — the log will tell you when you're close.
+Verticals accumulate. Extend the menus in the `design-playbook` skill whenever a genuinely better pattern shows up — the recipe log shows what's been used so far.
 
 Skills that declare `allowed-tools` or `hooks` prompt for approval on first use. That's expected; approve once.

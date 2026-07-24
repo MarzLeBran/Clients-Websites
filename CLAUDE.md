@@ -13,7 +13,7 @@ clients/<slug>/     one directory per client
   brief/            00-audit → 04-design-system (generated, in order)
   site/             the Astro project
 _system/
-  RECIPE-LOG.md     anti-repetition ledger — check before every Stage 2
+  RECIPE-LOG.md     build log — a record of what was built, not a constraint
   intake-form.md    the form we send clients
 _template/          Astro starter, cloned by scripts/new-client.sh
 ```
@@ -36,7 +36,7 @@ A `PreToolUse` hook blocks writes to `clients/*/site/` until `brief/02-design-di
 ## Rules
 
 1. **No invented facts.** Every claim on a site — years in business, certifications, awards, licence numbers, "family owned" — traces to `intake/`. If it isn't there, ask. Never fill a gap with a plausible guess.
-2. **No repeated recipes.** Read `_system/RECIPE-LOG.md` before proposing directions. Never reuse a hero archetype or services layout within a vertical. Append a row after every build.
+2. **Repetition is allowed.** Choose the layout that converts best for the vertical, even if a prior client used it. Brand color, logo, photos, services, and copy differentiate sites naturally. Append a row to `_system/RECIPE-LOG.md` after every build — it's a record, not a constraint.
 3. **Business facts live in `site.config.ts`.** Phone, hours, licence, service areas, NAP. Never hardcode them into components — a client changing their number should be a one-line edit.
 4. **Delegate image reading.** A client folder holds 50+ photos. Use the `brand-analyst` subagent so they're read in an isolated context and only the summary returns.
 5. **Compliance ships with the site.** Every phone-collecting form needs an unchecked SMS consent box with full TCPA language, plus a live privacy policy. Without them the client's A2P 10DLC registration gets rejected and their GHL campaigns never send.

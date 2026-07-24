@@ -14,7 +14,7 @@ Same instructions plus same model equals same site in different hex codes. Recol
 Three mechanisms, every build:
 
 1. **Menus, not defaults.** Hero, services layout, nav, and section rhythm are each chosen from a menu and logged. Nothing is a default.
-2. **The recipe log.** No archetype repeats within a vertical.
+2. **The build log.** `_system/RECIPE-LOG.md` records every build's choices so the studio can see its own patterns. It is documentation, not a constraint — repeating a prior client's choice is fine when it's what converts for the vertical.
 3. **Asset-driven design.** The photo library dictates strategy, and no two clients have the same library. This is the strongest natural source of variation available.
 
 ---
@@ -40,7 +40,7 @@ Graded at Stage 0. Determines the entire design strategy. Not negotiable by tast
 
 ## Vertical vibe library
 
-Starting points. Each has an obvious read and a counter-read — **use the counter-read when the obvious one is already logged for that vertical.**
+Starting points. Each has an obvious read and a counter-read — both are legitimate; pick whichever fits the client's actual brand evidence.
 
 **Plumbing / drain / rooter**
 Obvious: urgency and trust. Saturated primary, bold condensed type, 24/7 badging, truck and uniform imagery, response-time promises.
@@ -96,7 +96,7 @@ Counter: premium pet spa — muted sophistication, grooming as wellness rather t
 
 ## Structural menus
 
-Pick one from each. Log it. Don't repeat within a vertical.
+Pick one from each, deliberately — nothing is a default. Log the choice in `_system/RECIPE-LOG.md` (documentation, not a constraint); repeating a prior client's choice is fine when it converts.
 
 ### Hero archetypes
 
