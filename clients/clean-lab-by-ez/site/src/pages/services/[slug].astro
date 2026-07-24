@@ -11,7 +11,7 @@ import FAQPageSchema from '../../components/schema/FAQPageSchema.astro';
 import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
 import { getCollection, render } from 'astro:content';
 import { site } from '../../config/site.config';
-import { getOptimizedPhoto, getGalleryPhotos, ALL_PHOTO_KEYS, type PhotoKey } from '../../lib/photos';
+import { getOptimizedPhoto, getGalleryPhotos, selectServiceKeys, type PhotoKey } from '../../lib/photos';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -41,9 +41,10 @@ const banner = service.data.heroImage
   ? await getOptimizedPhoto(service.data.heroImage as PhotoKey, 1200)
   : null;
 
-// Recent-work strip: a few photos other than this page's own banner, so
-// browsing between service pages doesn't show the identical set each time.
-const stripKeys = ALL_PHOTO_KEYS.filter((k) => k !== service.data.heroImage).slice(0, 4);
+// Recent-work strip: selected by registry metadata (serviceRelevance) so
+// each service page leads with photos that genuinely depict its work,
+// excluding the page's own banner.
+const stripKeys = selectServiceKeys(service.data.slug, [service.data.heroImage as PhotoKey]).slice(0, 4);
 const stripPhotos = await getGalleryPhotos(stripKeys, 600);
 ---
 
@@ -70,6 +71,10 @@ const stripPhotos = await getGalleryPhotos(stripKeys, 600);
       <div class="mx-auto mb-12 max-w-4xl px-6">
         <img
           src={banner.src}
+          srcset={banner.srcset}
+          sizes="(min-width: 896px) 896px, 100vw"
+          width={banner.width}
+          height={banner.height}
           alt={banner.alt}
           class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated"
         />

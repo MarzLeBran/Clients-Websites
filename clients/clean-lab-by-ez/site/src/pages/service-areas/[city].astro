@@ -64,6 +64,10 @@ const banner = area.data.heroImage
       <div class="mx-auto mb-12 max-w-4xl px-6">
         <img
           src={banner.src}
+          srcset={banner.srcset}
+          sizes="(min-width: 896px) 896px, 100vw"
+          width={banner.width}
+          height={banner.height}
           alt={banner.alt}
           class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated"
         />

@@ -9,9 +9,7 @@ import Lightbox from '../components/ui/Lightbox.astro';
 import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
 import { site } from '../config/site.config';
 import { getCollection } from 'astro:content';
-import { getImage } from 'astro:assets';
-import { getGalleryPhotos, ALL_PHOTO_KEYS } from '../lib/photos';
-import heroImg from '../assets/photos/black-vehicle-detailing.jpg';
+import { getGalleryPhotos, getOptimizedPhoto, ALL_PHOTO_KEYS } from '../lib/photos';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const tiers = services.filter((s) => s.data.serviceTier === 'primary');
@@ -21,8 +19,10 @@ const areas = await getCollection('areas');
 const galleryImages = await getGalleryPhotos(ALL_PHOTO_KEYS, 800);
 
 // Hero upgraded post-launch-review: full-bleed real photo + scrim, per
-// operator feedback that the color-block-only hero read as plain.
-const heroPhoto = await getImage({ src: heroImg, width: 1600, format: 'webp' });
+// operator feedback that the color-block-only hero read as plain. The key
+// is an approved design decision (the audit's best hero candidate), not an
+// auto-pick — selectHeroKey() exists for demo spins that need one.
+const heroPhoto = await getOptimizedPhoto('black-vehicle-detailing', 1600);
 const hexPattern =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 0L56 16v34L28 66 0 50V16z' fill='none' stroke='%23F78C16' stroke-opacity='0.10' stroke-width='1'/%3E%3Cpath d='M28 34l28 16v34L28 100 0 84V50z' fill='none' stroke='%23F78C16' stroke-opacity='0.10' stroke-width='1'/%3E%3C/svg%3E";
 ---
@@ -33,10 +33,19 @@ const hexPattern =
   <LocalBusinessSchema slot="head" type="AutoWash" />
 
   <section class="relative flex min-h-[640px] items-center overflow-hidden">
-    <div
-      class="absolute inset-0 scale-[1.02] bg-cover bg-[position:center_right]"
-      style={`background-image: url("${heroPhoto.src}");`}
-    ></div>
+    {/* A real <img> instead of a CSS background so the LCP element gets a
+        responsive srcset, intrinsic dimensions, and fetchpriority. alt=""
+        — decorative; the scrim carries the real content over it. */}
+    <img
+      src={heroPhoto.src}
+      srcset={heroPhoto.srcset}
+      sizes="100vw"
+      width={heroPhoto.width}
+      height={heroPhoto.height}
+      alt=""
+      fetchpriority="high"
+      class="absolute inset-0 h-full w-full scale-[1.02] object-cover object-[center_right]"
+    />
     {/* Two-layer scrim: horizontal (text legibility left-to-right) plus a
         vertical bottom layer — a single flat gradient reads muddy against a
         real photo. */}

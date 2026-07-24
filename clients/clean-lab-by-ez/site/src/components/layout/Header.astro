@@ -72,6 +72,10 @@ const navRest = [
                   {s.photo && (
                     <img
                       src={s.photo.src}
+                      srcset={s.photo.srcset}
+                      sizes="56px"
+                      width={s.photo.width}
+                      height={s.photo.height}
                       alt=""
                       class="h-14 w-14 flex-shrink-0 rounded-button object-cover"
                     />
