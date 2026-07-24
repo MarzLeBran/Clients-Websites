@@ -8,7 +8,10 @@ export function initLeadForms(selector = '[data-lead-form]') {
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const webhookUrl = form.dataset.webhookUrl;
+      // Demo mode never submits anywhere, even if an endpoint is configured
+      // — the visible call/text fallback is the mock.
+      const isDemo = form.dataset.mode === 'demo';
+      const webhookUrl = isDemo ? '' : form.dataset.webhookUrl;
       const fallbackPhone = form.dataset.fallbackPhone;
       const status = form.querySelector<HTMLElement>('[data-form-status]');
 

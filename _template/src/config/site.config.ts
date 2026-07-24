@@ -2,6 +2,14 @@
 // Flag every field the intake didn't answer — never guess, never ship a
 // placeholder that could pass as real.
 export interface SiteConfig {
+  // Demo is a strict subset of production in the same project, never a
+  // throwaway. 'demo': integrations are mocked — booking renders the
+  // form+phone fallback regardless of provider, chat stays off, and lead
+  // forms never POST anywhere (visible call/text fallback instead). A demo
+  // needs only: name, logo, phone, primary services, one brand color,
+  // optional photos. 'production': real integrations, full page set, full
+  // SEO — flipped in place; tokens, logo, photos, and pages carry forward.
+  mode: 'demo' | 'production';
   business: {
     legalName: string;
     displayName: string;
@@ -61,6 +69,7 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
+  mode: 'demo', // every new spin starts as a demo; flip at real launch
   business: {
     legalName: '',
     displayName: '',

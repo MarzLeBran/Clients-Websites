@@ -3,6 +3,13 @@
 // placeholder that could pass as real. See brief/03-architecture.md for the
 // sourced fill plan this file implements.
 export interface SiteConfig {
+  // Demo is a strict subset of production in the same project, never a
+  // throwaway. 'demo': integrations are mocked — booking renders the
+  // form+phone fallback regardless of provider, chat stays off, and lead
+  // forms never POST anywhere (visible call/text fallback instead).
+  // 'production': real integrations, full page set, full SEO — flipped in
+  // place; tokens, logo, photos, and pages carry forward.
+  mode: 'demo' | 'production';
   business: {
     legalName: string;
     displayName: string;
@@ -71,6 +78,9 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
+  // Still a demo: GHL webhook/booking URLs, license, individual reviews,
+  // and the real domain are all pending. Flip to 'production' at launch.
+  mode: 'demo',
   business: {
     // Confirmed by operator (2026-07-23, 2026-07-24): "Clean Lab by EZ" is
     // the legal name, matching the flyer spelling. Dummy/demo build for

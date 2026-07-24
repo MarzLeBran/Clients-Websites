@@ -15,6 +15,7 @@ const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== '
 <form
   class="space-y-4"
   data-lead-form
+  data-mode={site.mode}
   data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''}
   data-fallback-phone={phone}
 >

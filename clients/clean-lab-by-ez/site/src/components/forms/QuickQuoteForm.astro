@@ -15,7 +15,7 @@ const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== '
   <p class="font-display text-display-sm font-bold text-text-primary">Get a Free Quote</p>
   <p class="mt-1 text-utility text-text-muted">We'll text you back — usually within minutes.</p>
 
-  <form class="mt-5 space-y-3" data-lead-form data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''} data-fallback-phone={phone}>
+  <form class="mt-5 space-y-3" data-lead-form data-mode={site.mode} data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''} data-fallback-phone={phone}>
     <label class="block">
       <span class="sr-only">Name</span>
       <input

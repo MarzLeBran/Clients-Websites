@@ -7,10 +7,19 @@ import OtherEmbed from './providers/OtherEmbed.astro';
 import FormPhoneFallback from './providers/FormPhoneFallback.astro';
 
 const { provider, embedUrl, mode } = site.booking;
+// Demo mode never wires a real embed, whatever the provider says — the
+// form+phone fallback is the mock. Flipping site.mode to 'production'
+// activates the configured provider with no other change.
+const isDemo = site.mode === 'demo';
 ---
 
-{provider === 'calendly' && <CalendlyEmbed url={embedUrl} mode={mode} />}
-{provider === 'ghl' && <GHLEmbed url={embedUrl} />}
-{provider === 'google' && <GoogleEmbed url={embedUrl} />}
-{provider === 'other' && <OtherEmbed url={embedUrl} />}
-{provider === 'none' && <FormPhoneFallback />}
+{isDemo || provider === 'none' ? (
+  <FormPhoneFallback />
+) : (
+  <>
+    {provider === 'calendly' && <CalendlyEmbed url={embedUrl} mode={mode} />}
+    {provider === 'ghl' && <GHLEmbed url={embedUrl} />}
+    {provider === 'google' && <GoogleEmbed url={embedUrl} />}
+    {provider === 'other' && <OtherEmbed url={embedUrl} />}
+  </>
+)}

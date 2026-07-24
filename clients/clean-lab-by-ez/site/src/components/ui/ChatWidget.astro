@@ -4,7 +4,8 @@
 // licence claims. Falls back to a human-escalation prompt.
 import { site } from '../../config/site.config';
 
-const enabled = site.chat.mode !== 'off';
+// Demo mode never loads chat — mocked integrations only.
+const enabled = site.mode === 'production' && site.chat.mode !== 'off';
 ---
 
 {enabled && <div id="chat-widget-root" data-chat-mode={site.chat.mode}></div>}
