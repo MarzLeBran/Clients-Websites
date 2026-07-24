@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import ServiceCard from '../../components/ui/ServiceCard.astro';
+import CTAButton from '../../components/ui/CTAButton.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('areas');
+  return areas.map((area) => ({
+    params: { city: area.data.slug },
+    props: { area },
+  }));
+}
+
+const { area } = Astro.props;
+const { Content } = await render(area);
+const services = await getCollection('services');
+const cityPages = await getCollection('cityServicePages');
+const url = new URL(`/service-areas/${area.data.slug}/`, Astro.site).toString();
+
+// Link to this city's actual city×service page when one exists, falling
+// back to the generic tier page — without this, area pages always point to
+// the same generic tier pages regardless of city, and the city×service
+// pages stay orphaned with no inbound link from the area↔service graph.
+const serviceLinks = services.map((s) => {
+  const cityPage = cityPages.find(
+    (p) => p.data.serviceSlug === s.data.slug && p.data.citySlug === area.data.slug
+  );
+  return {
+    service: s,
+    href: cityPage
+      ? `/services/${s.data.slug}-${area.data.slug}/`
+      : `/services/${s.data.slug}/`,
+  };
+});
+---
+
+<BaseLayout title={`Serving ${area.data.city}, ${area.data.state}`} description={area.data.blurb}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Service Areas', url: new URL('/service-areas/', Astro.site).toString() },
+      { name: area.data.city, url },
+    ]}
+  />
+
+  <article>
+    <div class="px-6 pt-16">
+      <div class="mx-auto max-w-3xl">
+        <SectionHeading title={`Serving ${area.data.city}, ${area.data.state}`} />
+      </div>
+    </div>
+
+    {area.data.heroImage && (
+      <div class="mx-auto mb-12 max-w-4xl px-6">
+        <img src={area.data.heroImage} alt="" class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated" />
+      </div>
+    )}
+
+    <div class="px-6">
+      <div class="mx-auto max-w-3xl space-y-4 text-body">
+        <Content />
+      </div>
+
+      <div class="mx-auto mt-12 max-w-4xl grid gap-6 md:grid-cols-3">
+        {serviceLinks.map(({ service: s, href }) => (
+          <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} href={href} />
+        ))}
+      </div>
+
+      <div class="mx-auto mt-12 max-w-4xl">
+        <CTAButton href="/contact/">Get a Quote in {area.data.city}</CTAButton>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

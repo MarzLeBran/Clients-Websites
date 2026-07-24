@@ -1,0 +1,14 @@
+---
+interface Props {
+  city: string;
+  slug: string;
+  blurb: string;
+}
+
+const { city, slug, blurb } = Astro.props;
+---
+
+<a href={`/service-areas/${slug}/`} class="card-lift block rounded-card border border-line bg-surface-raised p-6 shadow-card">
+  <h3 class="font-display text-display-md font-bold">{city}</h3>
+  <p class="mt-2 text-body">{blurb}</p>
+</a>

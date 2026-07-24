@@ -8,3 +8,5 @@ clients/*/site/node_modules/
 clients/*/site/dist/
 clients/*/assets/photos/
 clients/*/assets/existing/
+clients/*/assets/logo/
+.claude/scheduled_tasks.lock

@@ -1,0 +1,71 @@
+---
+// Every extra field costs conversions — keep to name, phone, email, service,
+// ZIP, message. Checkbox is hardcoded unchecked; never bind it to a
+// default-true state. If site.forms.webhookUrl is unset, submission is
+// intercepted client-side with a visible call/text fallback instead of
+// posting into nothing.
+import { site } from '../../config/site.config';
+import CTAButton from '../ui/CTAButton.astro';
+
+const businessName = site.business.displayName;
+const phone = site.business.phoneE164 || site.business.phone;
+const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== 'PENDING';
+---
+
+<form
+  class="space-y-4"
+  data-lead-form
+  data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''}
+  data-fallback-phone={phone}
+>
+  <div class="grid gap-4 md:grid-cols-2">
+    <label class="block">
+      <span class="text-utility">Name <span aria-hidden="true">*</span><span class="sr-only">(required)</span></span>
+      <input type="text" name="name" required class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2" />
+    </label>
+    <label class="block">
+      <span class="text-utility">Phone <span aria-hidden="true">*</span><span class="sr-only">(required)</span></span>
+      <input type="tel" name="phone" required class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2" />
+    </label>
+    <label class="block">
+      <span class="text-utility">Email</span>
+      <input type="email" name="email" class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2" />
+    </label>
+    <label class="block">
+      <span class="text-utility">Service</span>
+      <select name="service" class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2">
+        {site.services.map((s) => <option value={s.slug}>{s.name}</option>)}
+      </select>
+    </label>
+    <label class="block">
+      <span class="text-utility">ZIP code</span>
+      <input type="text" name="zip" inputmode="numeric" class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2" />
+    </label>
+  </div>
+  <label class="block">
+    <span class="text-utility">Message</span>
+    <textarea name="message" rows="4" class="mt-1 w-full rounded-button border border-border bg-surface-raised text-text-primary px-3 py-2"></textarea>
+  </label>
+
+  {site.forms.smsConsentRequired && (
+    <label class="flex items-start gap-3 text-utility">
+      <input type="checkbox" name="smsConsent" checked={false} required class="mt-1 accent-brand-primary" />
+      <span>
+        <span aria-hidden="true">*</span><span class="sr-only">(required)</span> By checking this box you agree to receive text messages from {businessName} at the
+        number provided, including appointment reminders and service updates. Consent is not a
+        condition of purchase. Message and data rates may apply. Message frequency varies. Reply
+        STOP to opt out or HELP for help. See our <a href="/privacy/" class="underline">Privacy Policy</a>
+        and <a href="/terms/" class="underline">Terms</a>.
+      </span>
+    </label>
+  )}
+
+  <div data-form-status role="status" aria-live="polite" class="hidden text-utility"></div>
+
+  <CTAButton type="submit">Send</CTAButton>
+</form>
+
+<script>
+  import { initLeadForms } from '../../lib/lead-form';
+  initLeadForms();
+</script>

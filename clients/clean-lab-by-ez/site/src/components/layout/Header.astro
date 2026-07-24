@@ -1,0 +1,187 @@
+---
+// Mobile nav toggle + Services mega-menu are the only client JS in the
+// header. Mega-menu added post-launch-review: operator wants "Services" to
+// expand into a real picker with images, not a plain link straight to the
+// index page — common pattern across reference sites they liked.
+import { site } from '../../config/site.config';
+import { telHref, formatPhone } from '../../lib/format';
+import { getCollection } from 'astro:content';
+import { getOptimizedPhoto, type PhotoKey } from '../../lib/photos';
+import CTAButton from '../ui/CTAButton.astro';
+import { Image } from 'astro:assets';
+import logoMark from '../../assets/logo/logo-mark.png';
+import byEzMark from '../../assets/logo/by-ez.png';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const serviceMenuItems = await Promise.all(
+  services.map(async (s) => ({
+    name: s.data.name,
+    slug: s.data.slug,
+    shortDescription: s.data.shortDescription,
+    photo: s.data.heroImage ? await getOptimizedPhoto(s.data.heroImage as PhotoKey, 300) : null,
+  }))
+);
+
+const navRest = [
+  { label: 'Service Areas', href: '/service-areas/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Reviews', href: '/reviews/' },
+  { label: 'FAQ', href: '/faq/' },
+  { label: 'Contact', href: '/contact/' },
+];
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-transparent transition-[background-color,box-shadow,border-color] duration-standard"
+  data-header
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+    <a href="/" class="flex items-center gap-2" aria-label={site.business.displayName}>
+      <Image src={logoMark} alt="" width={44} height={36} class="h-9 w-auto" />
+      <span class="flex items-baseline gap-1.5" aria-hidden="true">
+        <span class="font-display text-display-sm font-bold uppercase tracking-tight">
+          <span class="text-text-primary">Clean </span><span class="text-brand-primary">Lab</span>
+        </span>
+        <Image src={byEzMark} alt="" width={70} height={14} class="h-4 w-auto translate-y-0.5" />
+      </span>
+    </a>
+    <nav class="hidden gap-6 md:flex" aria-label="Primary">
+      <ul class="flex items-center gap-6">
+        <li class="relative" data-mega-menu>
+          <button
+            type="button"
+            class="flex min-h-11 items-center gap-1.5 text-body hover:text-brand-primary"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="services-mega-menu"
+            data-mega-menu-trigger
+          >
+            Services
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="transition-transform duration-fast" data-mega-menu-chevron>
+              <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div
+            id="services-mega-menu"
+            role="menu"
+            aria-label="Services"
+            class="absolute left-1/2 top-full hidden w-[640px] -translate-x-1/2 pt-3"
+            data-mega-menu-panel
+          >
+            <div class="grid grid-cols-2 gap-2 rounded-card border border-line bg-surface-raised p-4 shadow-elevated">
+              {serviceMenuItems.map((s) => (
+                <a
+                  href={`/services/${s.slug}/`}
+                  role="menuitem"
+                  class="flex items-center gap-3 rounded-button p-2 transition-colors duration-fast hover:bg-surface"
+                >
+                  {s.photo && (
+                    <img
+                      src={s.photo.src}
+                      alt=""
+                      class="h-14 w-14 flex-shrink-0 rounded-button object-cover"
+                    />
+                  )}
+                  <span>
+                    <span class="block text-body font-medium text-text-primary">{s.name}</span>
+                    <span class="block text-utility text-text-muted">{s.shortDescription}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </li>
+        {navRest.map((item) => (
+          <li><a href={item.href} class="flex min-h-11 items-center text-body hover:text-brand-primary">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="flex items-center gap-3">
+      {site.business.phone && (
+        <a href={telHref(site.business.phoneE164)} class="hidden text-body font-medium sm:block">
+          {formatPhone(site.business.phoneE164 || site.business.phone)}
+        </a>
+      )}
+      <CTAButton href="/contact/">Get a Quote</CTAButton>
+      <button
+        type="button"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-button border border-border text-text-primary md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-mobile-nav-toggle
+      >
+        <span class="sr-only">Menu</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="hidden border-t border-border px-6 py-4 md:hidden" aria-label="Primary mobile" data-mobile-nav>
+    <ul class="flex flex-col gap-1">
+      <li><a href="/services/" class="block min-h-11 py-2.5 text-body hover:text-brand-primary">Services</a></li>
+      {navRest.map((item) => (
+        <li><a href={item.href} class="block min-h-11 py-2.5 text-body hover:text-brand-primary">{item.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      panel.classList.toggle('hidden', isOpen);
+    });
+  }
+
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    const setScrolled = () => {
+      const scrolled = window.scrollY > 12;
+      header.classList.toggle('bg-surface/95', scrolled);
+      header.classList.toggle('backdrop-blur', scrolled);
+      header.classList.toggle('border-line', scrolled);
+      header.classList.toggle('shadow-elevated', scrolled);
+    };
+    setScrolled();
+    window.addEventListener('scroll', setScrolled, { passive: true });
+  }
+
+  // Services mega-menu: click-toggle (works on touch) plus hover-intent on
+  // desktop, closes on Escape or an outside click.
+  const menuRoot = document.querySelector<HTMLElement>('[data-mega-menu]');
+  const menuTrigger = document.querySelector<HTMLButtonElement>('[data-mega-menu-trigger]');
+  const menuPanel = document.querySelector<HTMLElement>('[data-mega-menu-panel]');
+  const menuChevron = document.querySelector<SVGElement>('[data-mega-menu-chevron]');
+  if (menuRoot && menuTrigger && menuPanel) {
+    let hoverTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const setOpen = (open: boolean) => {
+      menuTrigger.setAttribute('aria-expanded', String(open));
+      menuPanel.classList.toggle('hidden', !open);
+      menuChevron?.style.setProperty('transform', open ? 'rotate(180deg)' : '');
+    };
+
+    menuTrigger.addEventListener('click', () => {
+      setOpen(menuTrigger.getAttribute('aria-expanded') !== 'true');
+    });
+    menuRoot.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      setOpen(true);
+    });
+    menuRoot.addEventListener('mouseleave', () => {
+      hoverTimer = setTimeout(() => setOpen(false), 150);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    document.addEventListener('click', (e) => {
+      if (!menuRoot.contains(e.target as Node)) setOpen(false);
+    });
+  }
+</script>

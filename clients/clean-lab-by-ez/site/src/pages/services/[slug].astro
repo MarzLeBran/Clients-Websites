@@ -1,0 +1,130 @@
+---
+// 600+ words expected per service page at Stage 5, with its own FAQ + CTA.
+// Photo banner + recent-work strip + mid-page CTA added post-launch-review
+// per operator feedback that inner pages read as too text-heavy.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import CTAButton from '../../components/ui/CTAButton.astro';
+import Lightbox from '../../components/ui/Lightbox.astro';
+import ServiceSchema from '../../components/schema/ServiceSchema.astro';
+import FAQPageSchema from '../../components/schema/FAQPageSchema.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { getCollection, render } from 'astro:content';
+import { site } from '../../config/site.config';
+import { getOptimizedPhoto, getGalleryPhotos, ALL_PHOTO_KEYS, type PhotoKey } from '../../lib/photos';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.data.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const faqs = (await getCollection('faqs')).filter((f) => f.data.serviceSlug === service.data.slug);
+const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
+
+// Link down into this service's city pages — without this, city×service
+// pages have no inbound path from the tier page above them in the graph.
+const areas = await getCollection('areas');
+const cityPages = (await getCollection('cityServicePages')).filter(
+  (p) => p.data.serviceSlug === service.data.slug
+);
+
+const banner = service.data.heroImage
+  ? await getOptimizedPhoto(service.data.heroImage as PhotoKey, 1200)
+  : null;
+
+// Recent-work strip: a few photos other than this page's own banner, so
+// browsing between service pages doesn't show the identical set each time.
+const stripKeys = ALL_PHOTO_KEYS.filter((k) => k !== service.data.heroImage).slice(0, 4);
+const stripPhotos = await getGalleryPhotos(stripKeys, 600);
+---
+
+<BaseLayout title={`${service.data.name} | ${site.business.displayName}`} description={service.data.shortDescription}>
+  <ServiceSchema slot="head" service={{ name: service.data.name, slug: service.data.slug, priceFrom: service.data.priceFrom }} />
+  {faqs.length > 0 && <FAQPageSchema slot="head" faqs={faqs.map((f) => f.data)} />}
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Services', url: new URL('/services/', Astro.site).toString() },
+      { name: service.data.name, url },
+    ]}
+  />
+
+  <article>
+    <div class="px-6 pt-16">
+      <div class="mx-auto max-w-3xl">
+        <SectionHeading title={service.data.name} />
+      </div>
+    </div>
+
+    {banner && (
+      <div class="mx-auto mb-12 max-w-4xl px-6">
+        <img
+          src={banner.src}
+          alt={banner.alt}
+          class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated"
+        />
+      </div>
+    )}
+
+    <div class="px-6">
+      <div class="mx-auto max-w-3xl space-y-4 text-body">
+        <Content />
+      </div>
+
+      <div class="mx-auto mt-10 max-w-3xl">
+        <CTAButton href="/contact/">Get a Quote for {service.data.name}</CTAButton>
+      </div>
+
+      {faqs.length > 0 && (
+        <div class="mx-auto mt-16 max-w-3xl space-y-4">
+          <h2 class="font-display text-display-md font-bold">Frequently asked questions</h2>
+          {faqs.map((f) => (
+            <div>
+              <h3 class="font-medium">{f.data.question}</h3>
+              <p class="text-body">{f.data.answer}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {cityPages.length > 0 && (
+        <div class="mx-auto mt-16 max-w-3xl">
+          <h2 class="font-display text-display-md font-bold">Available in these cities</h2>
+          <ul class="mt-4 flex flex-wrap gap-3">
+            {cityPages.map((p) => {
+              const area = areas.find((a) => a.data.slug === p.data.citySlug);
+              return area ? (
+                <li>
+                  <a
+                    href={`/services/${service.data.slug}-${p.data.citySlug}/`}
+                    class="inline-block rounded-button border border-border px-3 py-1.5 text-utility hover:border-brand-primary hover:text-brand-primary"
+                  >
+                    {area.data.city}, {area.data.state}
+                  </a>
+                </li>
+              ) : null;
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    <div class="px-6 py-16">
+      <div class="mx-auto max-w-4xl">
+        <SectionHeading eyebrow="Recent Work" title="More cars we've detailed" level="h2" />
+        <Lightbox images={stripPhotos} />
+      </div>
+    </div>
+
+    <div class="bg-surface-raised px-6 py-16 text-center">
+      <SectionHeading title={`Ready to book ${service.data.name}?`} level="h2" />
+      <CTAButton href="/contact/">Get a Quote</CTAButton>
+    </div>
+  </article>
+</BaseLayout>

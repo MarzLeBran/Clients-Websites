@@ -1,0 +1,19 @@
+---
+interface Props {
+  name: string;
+  slug: string;
+  shortDescription: string;
+  priceFrom?: number;
+  // Lets a page link to a more specific page (e.g. a city×service combo)
+  // instead of the generic service-tier page.
+  href?: string;
+}
+
+const { name, slug, shortDescription, priceFrom, href } = Astro.props;
+---
+
+<a href={href ?? `/services/${slug}/`} class="card-lift block rounded-card border border-line bg-surface-alt p-6 shadow-card">
+  <h3 class="font-display text-display-md font-bold">{name}</h3>
+  <p class="mt-2 text-body">{shortDescription}</p>
+  {priceFrom && <p class="mt-4 text-utility">From ${priceFrom}</p>}
+</a>

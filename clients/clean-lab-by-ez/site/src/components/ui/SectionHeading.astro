@@ -1,0 +1,18 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  // Most pages use this as their only heading — default to h1. Pass "h2"
+  // explicitly on pages (like the homepage) that already have a real <h1>
+  // elsewhere and use this component for secondary section headings.
+  level?: 'h1' | 'h2';
+}
+
+const { eyebrow, title, level = 'h1' } = Astro.props;
+const Tag = level;
+---
+
+<div class="mb-8">
+  {eyebrow && <p class="text-utility font-medium uppercase tracking-wide text-brand-primary">{eyebrow}</p>}
+  <Tag class="font-display text-display-lg font-bold">{title}</Tag>
+</div>

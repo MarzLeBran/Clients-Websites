@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ReviewCard from '../components/ui/ReviewCard.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+import { getCollection } from 'astro:content';
+
+const testimonials = await getCollection('testimonials');
+---
+
+<BaseLayout title={`Reviews | ${site.business.displayName}`} description={`What customers say about ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Reviews', url: new URL('/reviews/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="Reviews" />
+    <div class="mb-8 rounded-card bg-surface-raised p-6 shadow-card">
+      <p class="text-brand-primary" aria-hidden="true">★★★★★</p>
+      <p class="mt-2 font-display text-display-md font-bold">5.0 · 25 Google reviews</p>
+      <p class="mt-2 text-body text-text-muted">
+        Individual review quotes aren't loaded on this page yet — the star rating and count above
+        are real, from Clean Lab by EZ's Google Business Profile.
+      </p>
+    </div>
+    {testimonials.length > 0 && (
+      <div class="grid gap-6 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <ReviewCard author={t.data.author} rating={t.data.rating} quote={t.data.quote} service={t.data.service} />
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>

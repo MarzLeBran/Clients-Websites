@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import ServiceCard from '../../components/ui/ServiceCard.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../../config/site.config';
+import { getCollection } from 'astro:content';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const url = new URL('/services/', Astro.site).toString();
+---
+
+<BaseLayout title={`Services | ${site.business.displayName}`} description={`Every service offered by ${site.business.displayName}.`}>
+  <BreadcrumbListSchema slot="head" crumbs={[{ name: 'Home', url: Astro.site?.toString() ?? '/' }, { name: 'Services', url }]} />
+  <section class="px-6 py-16">
+    <SectionHeading title="Services" />
+    <div class="grid gap-6 md:grid-cols-3">
+      {services.map((s) => (
+        <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

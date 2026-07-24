@@ -1,0 +1,21 @@
+---
+// Island, loaded on idle. Scoped strictly to faqs/services collection
+// content — must never invent prices, availability, warranty terms, or
+// licence claims. Falls back to a human-escalation prompt.
+import { site } from '../../config/site.config';
+
+const enabled = site.chat.mode !== 'off';
+---
+
+{enabled && <div id="chat-widget-root" data-chat-mode={site.chat.mode}></div>}
+
+{enabled && (
+  <script>
+    // Placeholder init: real chat vendor script gets wired at Stage 5 once
+    // a provider is chosen. Idle-loaded so it never competes with LCP.
+    requestIdleCallback?.(() => {
+      const root = document.getElementById('chat-widget-root');
+      if (root) root.dataset.ready = 'true';
+    });
+  </script>
+)}

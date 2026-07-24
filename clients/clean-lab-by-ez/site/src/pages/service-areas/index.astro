@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import AreaCard from '../../components/ui/AreaCard.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../../config/site.config';
+import { getCollection } from 'astro:content';
+
+const areas = await getCollection('areas');
+---
+
+<BaseLayout title={`Service Areas | ${site.business.displayName}`} description={`Every city and town served by ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Service Areas', url: new URL('/service-areas/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="Service areas" />
+    <div class="grid gap-6 md:grid-cols-3">
+      {areas.map((a) => (
+        <AreaCard city={a.data.city} slug={a.data.slug} blurb={a.data.blurb} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

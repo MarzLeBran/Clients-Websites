@@ -1,0 +1,56 @@
+---
+import { site } from '../../config/site.config';
+import { formatPhone, formatHours, telHref } from '../../lib/format';
+import { Image } from 'astro:assets';
+import logoMark from '../../assets/logo/logo-mark.png';
+import byEzMark from '../../assets/logo/by-ez.png';
+
+const socialLinks = Object.entries(site.social).filter(([, url]) => url);
+---
+
+<footer class="bg-surface-raised text-text-primary px-6 py-12">
+  <div class="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
+    <div>
+      <div class="flex items-center gap-2" role="img" aria-label={site.business.displayName}>
+        <Image src={logoMark} alt="" width={44} height={36} class="h-9 w-auto" />
+        <span class="flex items-baseline gap-1.5" aria-hidden="true">
+          <span class="font-display text-display-sm font-bold uppercase tracking-tight">
+            <span class="text-text-primary">Clean </span><span class="text-brand-primary">Lab</span>
+          </span>
+          <Image src={byEzMark} alt="" width={70} height={14} class="h-4 w-auto translate-y-0.5" />
+        </span>
+      </div>
+      {site.business.tagline && <p class="mt-2 text-body">{site.business.tagline}</p>}
+    </div>
+    <div>
+      {site.business.phone && (
+        <a href={telHref(site.business.phoneE164 || site.business.phone)} class="block text-body">
+          {formatPhone(site.business.phoneE164 || site.business.phone)}
+        </a>
+      )}
+      {site.business.email && <a href={`mailto:${site.business.email}`} class="block text-body">{site.business.email}</a>}
+      {site.business.hours.length > 0 && (
+        <ul class="mt-2 text-utility">
+          {formatHours(site.business.hours).map((line) => <li>{line}</li>)}
+        </ul>
+      )}
+    </div>
+    <div>
+      <nav aria-label="Legal">
+        <ul class="flex flex-col gap-1">
+          <li><a href="/privacy/" class="text-utility">Privacy Policy</a></li>
+          <li><a href="/terms/" class="text-utility">Terms of Service</a></li>
+        </ul>
+      </nav>
+      {socialLinks.length > 0 && (
+        <nav aria-label="Social" class="mt-4">
+          <ul class="flex gap-4">
+            {socialLinks.map(([name, url]) => (
+              <li><a href={url} class="text-utility" aria-label={name}>{name}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
+  </div>
+</footer>

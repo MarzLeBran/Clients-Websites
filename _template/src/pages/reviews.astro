@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ReviewCard from '../components/ui/ReviewCard.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+import { getCollection } from 'astro:content';
+
+const testimonials = await getCollection('testimonials');
+---
+
+<BaseLayout title={`Reviews | ${site.business.displayName}`} description={`What customers say about ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Reviews', url: new URL('/reviews/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="Reviews" />
+    {testimonials.length > 0 ? (
+      <div class="grid gap-6 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <ReviewCard author={t.data.author} rating={t.data.rating} quote={t.data.quote} service={t.data.service} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-body">No reviews loaded yet — pull real, attributable review text at Stage 5.</p>
+    )}
+  </section>
+</BaseLayout>

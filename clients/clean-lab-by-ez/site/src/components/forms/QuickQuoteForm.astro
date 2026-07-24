@@ -1,0 +1,81 @@
+---
+// Compact hero lead-capture form — name, phone, email, service, submit.
+// Same compliance/fallback behavior as ContactForm (shares src/lib/lead-form.ts),
+// just fewer fields for a hero-card context. Added post-launch-review: the
+// operator specifically wants the hero to lead with a quote request, not
+// just a CTA button, matching what converts on comparable reference sites.
+import { site } from '../../config/site.config';
+
+const businessName = site.business.displayName;
+const phone = site.business.phoneE164 || site.business.phone;
+const hasWebhook = Boolean(site.forms.webhookUrl) && site.forms.webhookUrl !== 'PENDING';
+---
+
+<div class="rounded-card border border-line bg-surface-raised p-6 shadow-elevated">
+  <p class="font-display text-display-sm font-bold text-text-primary">Get a Free Quote</p>
+  <p class="mt-1 text-utility text-text-muted">We'll text you back — usually within minutes.</p>
+
+  <form class="mt-5 space-y-3" data-lead-form data-webhook-url={hasWebhook ? site.forms.webhookUrl : ''} data-fallback-phone={phone}>
+    <label class="block">
+      <span class="sr-only">Name</span>
+      <input
+        type="text"
+        name="name"
+        required
+        placeholder="Name"
+        class="w-full rounded-button border border-border bg-surface px-3 py-2.5 text-text-primary placeholder:text-text-muted"
+      />
+    </label>
+    <label class="block">
+      <span class="sr-only">Phone</span>
+      <input
+        type="tel"
+        name="phone"
+        required
+        placeholder="Phone"
+        class="w-full rounded-button border border-border bg-surface px-3 py-2.5 text-text-primary placeholder:text-text-muted"
+      />
+    </label>
+    <label class="block">
+      <span class="sr-only">Email</span>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        class="w-full rounded-button border border-border bg-surface px-3 py-2.5 text-text-primary placeholder:text-text-muted"
+      />
+    </label>
+    <label class="block">
+      <span class="sr-only">Service</span>
+      <select
+        name="service"
+        class="w-full rounded-button border border-border bg-surface px-3 py-2.5 text-text-primary"
+      >
+        {site.services.map((s) => <option value={s.slug}>{s.name}</option>)}
+      </select>
+    </label>
+
+    {site.forms.smsConsentRequired && (
+      <label class="flex items-start gap-2 text-utility text-text-muted">
+        <input type="checkbox" name="smsConsent" checked={false} required class="mt-0.5 accent-brand-primary" />
+        <span>
+          <span aria-hidden="true">*</span><span class="sr-only">(required)</span> I agree to receive texts from {businessName} about my request. Msg &amp; data rates may apply. Reply STOP to opt out. See <a href="/privacy/" class="underline">Privacy</a> &amp; <a href="/terms/" class="underline">Terms</a>.
+        </span>
+      </label>
+    )}
+
+    <div data-form-status role="status" aria-live="polite" class="hidden text-utility"></div>
+
+    <button
+      type="submit"
+      class="btn-sweep min-h-11 w-full rounded-button bg-brand-primary px-5 py-2.5 font-medium text-text-inverse shadow-[0_12px_28px_-12px_var(--color-brand-glow)] transition-all duration-standard hover:bg-brand-secondary hover:shadow-[0_16px_34px_-12px_var(--color-brand-glow)]"
+    >
+      Get My Free Quote
+    </button>
+  </form>
+</div>
+
+<script>
+  import { initLeadForms } from '../../lib/lead-form';
+  initLeadForms();
+</script>

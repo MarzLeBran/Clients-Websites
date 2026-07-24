@@ -1,0 +1,12 @@
+---
+import { buildBreadcrumbListSchema } from '../../lib/schema';
+
+interface Props {
+  crumbs: { name: string; url: string }[];
+}
+
+const { crumbs } = Astro.props;
+const json = buildBreadcrumbListSchema(crumbs);
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(json)} />

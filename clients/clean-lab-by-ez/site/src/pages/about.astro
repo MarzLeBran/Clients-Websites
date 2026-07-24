@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+---
+
+<BaseLayout title={`About | ${site.business.displayName}`} description={`The story behind ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'About', url: new URL('/about/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="About" />
+    <!-- Written by site-copywriter at Stage 5, sourced only from intake. -->
+    <div class="max-w-3xl space-y-4 text-body">
+      <p>Clean Lab by EZ started with one idea: do the work myself, the way I'd want it done, and dictate the quality instead of handing that off to someone else's standard. That's still the whole point, every time we pull into a driveway.</p>
+      <p>We're not a shop — we've never had one. Clean Lab by EZ is 100% mobile, which means we bring our own water and electricity to you, whether that's a driveway in Davenport, a parking garage in Orlando, or anywhere else across the six Central Florida cities we cover: Kissimmee, Davenport, St. Cloud, Orlando, Poinciana, and Haines City.</p>
+      <p>The "lab" in the name isn't just a name. It's how we think about the work — precision over guesswork, done the same way every time, not a rushed once-over. We run two tiers because most cars fall into one of two situations: keeping something clean that's already in good shape (Lab Refresh), or getting a car back to where it should be after it's been let go too long (Lab Reset, our most-booked service).</p>
+      <p>None of that means much without the work backing it up. Customers around Central Florida have left us a 5.0-star average across 25 Google reviews, and that's the standard we're trying to hold every time we show up.</p>
+      <p>If your car needs attention, call or text (689) 200-6472 — we'll bring the lab to you.</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ContactForm from '../components/forms/ContactForm.astro';
+import BookingEmbed from '../components/booking/BookingEmbed.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+
+// FormPhoneFallback (rendered by BookingEmbed when provider is 'none')
+// already includes a ContactForm — don't duplicate it on this page.
+const showBookingEmbed = site.booking.provider !== 'none';
+---
+
+<BaseLayout title={`Contact | ${site.business.displayName}`} description={`Get in touch with ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Contact', url: new URL('/contact/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="Contact" />
+    {showBookingEmbed ? (
+      <div class="grid gap-12 md:grid-cols-2">
+        <ContactForm />
+        <BookingEmbed />
+      </div>
+    ) : (
+      <BookingEmbed />
+    )}
+  </section>
+</BaseLayout>

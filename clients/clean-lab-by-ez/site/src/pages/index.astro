@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import CTAButton from '../components/ui/CTAButton.astro';
+import QuickQuoteForm from '../components/forms/QuickQuoteForm.astro';
+import PriceSelector from '../components/ui/PriceSelector.astro';
+import AreaCard from '../components/ui/AreaCard.astro';
+import Lightbox from '../components/ui/Lightbox.astro';
+import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
+import { site } from '../config/site.config';
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import { getGalleryPhotos, ALL_PHOTO_KEYS } from '../lib/photos';
+import heroImg from '../assets/photos/black-vehicle-detailing.jpg';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const tiers = services.filter((s) => s.data.isPrimary);
+const areas = await getCollection('areas');
+
+// Per brief/00-audit.md's "Strong" list — real work photos, not stock.
+const galleryImages = await getGalleryPhotos(ALL_PHOTO_KEYS, 800);
+
+// Hero upgraded post-launch-review: full-bleed real photo + scrim, per
+// operator feedback that the color-block-only hero read as plain.
+const heroPhoto = await getImage({ src: heroImg, width: 1600, format: 'webp' });
+const hexPattern =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 0L56 16v34L28 66 0 50V16z' fill='none' stroke='%23F78C16' stroke-opacity='0.10' stroke-width='1'/%3E%3Cpath d='M28 34l28 16v34L28 100 0 84V50z' fill='none' stroke='%23F78C16' stroke-opacity='0.10' stroke-width='1'/%3E%3C/svg%3E";
+---
+
+<BaseLayout title={site.seo.defaultTitle || site.business.displayName} description={site.seo.defaultDescription}>
+  {/* AutoWash is the closest real schema.org subtype for mobile auto
+      detailing — schema.org has no dedicated "detailing" type. */}
+  <LocalBusinessSchema slot="head" type="AutoWash" />
+
+  <section class="relative flex min-h-[640px] items-center overflow-hidden">
+    <div
+      class="absolute inset-0 scale-[1.02] bg-cover bg-[position:center_right]"
+      style={`background-image: url("${heroPhoto.src}");`}
+    ></div>
+    {/* Two-layer scrim: horizontal (text legibility left-to-right) plus a
+        vertical bottom layer — a single flat gradient reads muddy against a
+        real photo. */}
+    <div
+      class="absolute inset-0"
+      style="background: linear-gradient(90deg, rgb(11 11 13 / 0.96) 0%, rgb(11 11 13 / 0.88) 34%, rgb(11 11 13 / 0.5) 66%, rgb(11 11 13 / 0.18) 100%);"
+    ></div>
+    <div
+      class="absolute inset-0"
+      style="background: linear-gradient(0deg, rgb(11 11 13 / 0.9), transparent 40%);"
+    ></div>
+    <div
+      class="absolute inset-0 opacity-60"
+      style={`background-image: url("${hexPattern}");`}
+    ></div>
+
+    <div class="relative mx-auto w-full max-w-6xl px-6 py-20 md:py-28">
+      <div class="grid items-end gap-10 md:grid-cols-[1fr_auto]">
+        <div class="hero-enter max-w-xl">
+          <span class="inline-flex items-center gap-2 rounded-badge border border-brand-primary/30 bg-brand-tint px-3 py-1.5 font-utility text-utility font-medium text-brand-accent">
+            // Mobile Detailing · Davenport, FL
+          </span>
+          <h1 class="mt-5 text-display-xl font-bold font-display text-text-primary">
+            Showroom shine,<br />right in your <span class="text-shine">driveway.</span>
+          </h1>
+          <p class="mt-5 max-w-lg text-body-lg text-text-muted">{site.seo.defaultDescription}</p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <CTAButton href="/contact/" sweep>Book Your Detail</CTAButton>
+            <CTAButton href="/services/" variant="secondary">See Services</CTAButton>
+          </div>
+          <div class="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-utility text-text-muted">
+            <span><span class="text-brand-primary" aria-hidden="true">★★★★★</span> 5.0</span>
+            <span class="h-1 w-1 rounded-full bg-text-muted" aria-hidden="true"></span>
+            <span>25 Google reviews</span>
+            <span class="h-1 w-1 rounded-full bg-text-muted" aria-hidden="true"></span>
+            <span>100% mobile — we bring water &amp; power</span>
+          </div>
+        </div>
+
+        <div class="hero-enter hero-enter-delay w-full md:w-[360px]">
+          <QuickQuoteForm />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {tiers.length > 0 && (
+    <section class="px-6 py-16">
+      <SectionHeading eyebrow="Services" title="Two ways to keep it clean" level="h2" />
+      <div class="grid gap-6 md:grid-cols-2">
+        {tiers.map((s) => (
+          <a
+            href={`/services/${s.data.slug}/`}
+            class="card-lift relative block rounded-card border border-line bg-surface-raised p-8 shadow-card"
+          >
+            {s.data.slug === 'lab-reset' && (
+              <span class="absolute -top-3 right-6 rounded-badge bg-brand-primary px-3 py-1 text-utility font-medium text-text-inverse">
+                Most Popular
+              </span>
+            )}
+            <h3 class="font-display text-display-md font-bold">{s.data.name}</h3>
+            <p class="mt-2 text-body text-text-muted">{s.data.shortDescription}</p>
+            <p class="mt-4 font-utility text-mono-lg text-brand-primary">From ${s.data.priceFrom}</p>
+          </a>
+        ))}
+      </div>
+      <div class="mt-6 flex flex-wrap gap-4 text-utility">
+        {services.filter((s) => !s.data.isPrimary).map((s) => (
+          <a href={`/services/${s.data.slug}/`} class="text-text-muted hover:text-brand-primary">
+            + {s.data.name}
+          </a>
+        ))}
+      </div>
+
+      {tiers.length > 0 && (
+        <div class="mx-auto mt-10 max-w-md">
+          <p class="mb-3 text-center text-utility text-text-muted">See pricing by vehicle size</p>
+          <PriceSelector />
+        </div>
+      )}
+    </section>
+  )}
+
+  <section class="px-6 py-16">
+    <SectionHeading eyebrow="Recent Work" title="Cars we've detailed" level="h2" />
+    <Lightbox images={galleryImages} />
+  </section>
+
+  <section class="bg-surface-raised px-6 py-16 text-center">
+    <p class="text-brand-primary" aria-hidden="true">★★★★★</p>
+    <p class="mt-2 font-display text-display-md font-bold">5.0 · 25 Google reviews</p>
+    <a href="/reviews/" class="mt-2 inline-block text-utility text-text-muted hover:text-brand-primary">
+      Read the reviews →
+    </a>
+  </section>
+
+  {areas.length > 0 && (
+    <section class="px-6 py-16">
+      <SectionHeading eyebrow="Service Areas" title="Where we bring the lab" level="h2" />
+      <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+        {areas.map((a) => (
+          <AreaCard city={a.data.city} slug={a.data.slug} blurb={a.data.blurb} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="px-6 py-16 text-center">
+    <SectionHeading title="Ready to get started?" level="h2" />
+    <CTAButton href="/contact/">Book Your Detail</CTAButton>
+  </section>
+</BaseLayout>

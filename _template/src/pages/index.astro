@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import CTAButton from '../components/ui/CTAButton.astro';
+import ServiceCard from '../components/ui/ServiceCard.astro';
+import ReviewCard from '../components/ui/ReviewCard.astro';
+import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
+import { site } from '../config/site.config';
+import { getCollection } from 'astro:content';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const testimonials = (await getCollection('testimonials')).slice(0, 3);
+---
+
+<BaseLayout title={site.seo.defaultTitle || site.business.displayName} description={site.seo.defaultDescription}>
+  <LocalBusinessSchema slot="head" />
+
+  <section class="px-6 py-20 text-center md:py-32">
+    <h1 class="font-display text-display-xl font-bold">{site.business.tagline || site.business.displayName}</h1>
+    <p class="mx-auto mt-4 max-w-2xl text-body">{site.seo.defaultDescription}</p>
+    <div class="mt-8 flex justify-center gap-4">
+      <CTAButton href="/contact/">Get a Quote</CTAButton>
+    </div>
+  </section>
+
+  {services.length > 0 && (
+    <section class="px-6 py-16">
+      <SectionHeading eyebrow="Services" title="What we do" level="h2" />
+      <div class="grid gap-6 md:grid-cols-3">
+        {services.map((s) => (
+          <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {testimonials.length > 0 && (
+    <section class="px-6 py-16">
+      <SectionHeading eyebrow="Reviews" title="What customers say" level="h2" />
+      <div class="grid gap-6 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <ReviewCard author={t.data.author} rating={t.data.rating} quote={t.data.quote} service={t.data.service} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="bg-neutral-100 px-6 py-16 text-center">
+    <SectionHeading title="Ready to get started?" level="h2" />
+    <CTAButton href="/contact/">Get a Quote</CTAButton>
+  </section>
+</BaseLayout>

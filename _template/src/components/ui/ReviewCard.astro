@@ -1,0 +1,20 @@
+---
+interface Props {
+  author: string;
+  rating: number;
+  quote: string;
+  service?: string;
+}
+
+const { author, rating, quote, service } = Astro.props;
+---
+
+<figure class="rounded-card border border-line bg-surface-alt p-6 shadow-card">
+  <div aria-label={`${rating} out of 5 stars`} class="text-brand-primary">
+    {'★'.repeat(rating)}{'☆'.repeat(5 - rating)}
+  </div>
+  <blockquote class="mt-2 text-body">"{quote}"</blockquote>
+  <figcaption class="mt-3 text-utility">
+    {author}{service && ` — ${service}`}
+  </figcaption>
+</figure>

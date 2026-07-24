@@ -1,0 +1,16 @@
+---
+import { site } from '../../config/site.config';
+import CalendlyEmbed from './providers/CalendlyEmbed.astro';
+import GHLEmbed from './providers/GHLEmbed.astro';
+import GoogleEmbed from './providers/GoogleEmbed.astro';
+import OtherEmbed from './providers/OtherEmbed.astro';
+import FormPhoneFallback from './providers/FormPhoneFallback.astro';
+
+const { provider, embedUrl, mode } = site.booking;
+---
+
+{provider === 'calendly' && <CalendlyEmbed url={embedUrl} mode={mode} />}
+{provider === 'ghl' && <GHLEmbed url={embedUrl} />}
+{provider === 'google' && <GoogleEmbed url={embedUrl} />}
+{provider === 'other' && <OtherEmbed url={embedUrl} />}
+{provider === 'none' && <FormPhoneFallback />}

@@ -1,0 +1,73 @@
+---
+// 600+ words expected per service page at Stage 5, with its own FAQ + CTA.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import CTAButton from '../../components/ui/CTAButton.astro';
+import ServiceSchema from '../../components/schema/ServiceSchema.astro';
+import FAQPageSchema from '../../components/schema/FAQPageSchema.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { getCollection, render } from 'astro:content';
+import { site } from '../../config/site.config';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.data.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+const faqs = (await getCollection('faqs')).filter((f) => f.data.serviceSlug === service.data.slug);
+const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
+---
+
+<BaseLayout title={`${service.data.name} | ${site.business.displayName}`} description={service.data.shortDescription}>
+  <ServiceSchema slot="head" service={{ name: service.data.name, slug: service.data.slug, priceFrom: service.data.priceFrom }} />
+  {faqs.length > 0 && <FAQPageSchema slot="head" faqs={faqs.map((f) => f.data)} />}
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Services', url: new URL('/services/', Astro.site).toString() },
+      { name: service.data.name, url },
+    ]}
+  />
+
+  <article>
+    <div class="px-6 pt-16">
+      <div class="mx-auto max-w-3xl">
+        <SectionHeading title={service.data.name} />
+      </div>
+    </div>
+
+    {service.data.heroImage && (
+      <div class="mx-auto mb-12 max-w-4xl px-6">
+        <img src={service.data.heroImage} alt="" class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated" />
+      </div>
+    )}
+
+    <div class="px-6">
+      <div class="mx-auto max-w-3xl space-y-4 text-body">
+        <Content />
+      </div>
+
+      <div class="mx-auto mt-10 max-w-3xl">
+        <CTAButton href="/contact/">Get a Quote for {service.data.name}</CTAButton>
+      </div>
+
+      {faqs.length > 0 && (
+        <div class="mx-auto mt-16 max-w-3xl space-y-4">
+          <h2 class="font-display text-display-md font-bold">Frequently asked questions</h2>
+          {faqs.map((f) => (
+            <div>
+              <h3 class="font-medium">{f.data.question}</h3>
+              <p class="text-body">{f.data.answer}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>

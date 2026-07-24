@@ -1,0 +1,25 @@
+---
+// Non-negotiable per build-standards: thumb-reachable Call / Book / Text bar,
+// visible only on small screens.
+import { site } from '../../config/site.config';
+import { telHref, smsHref } from '../../lib/format';
+
+const phone = site.business.phoneE164 || site.business.phone;
+const canText = site.business.sms;
+---
+
+<div class="fixed inset-x-0 bottom-0 z-40 flex h-14 border-t border-neutral-100 bg-surface md:hidden">
+  {phone && (
+    <a href={telHref(phone)} class="flex flex-1 items-center justify-center gap-2 text-body font-medium">
+      Call
+    </a>
+  )}
+  <a href="/contact/" class="flex flex-1 items-center justify-center gap-2 border-x border-neutral-100 text-body font-medium">
+    Book
+  </a>
+  {canText && phone && (
+    <a href={smsHref(phone)} class="flex flex-1 items-center justify-center gap-2 text-body font-medium">
+      Text
+    </a>
+  )}
+</div>

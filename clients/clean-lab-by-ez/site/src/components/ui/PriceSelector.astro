@@ -1,0 +1,96 @@
+---
+// Direction A "Precision Lab" signature element. Client-side island: the
+// only interactive piece in an otherwise zero-JS homepage. Reads real
+// vehicle-tier pricing from site.config.ts — never hardcode prices here.
+// Implements the full ARIA APG Tabs pattern (roving tabindex, arrow-key
+// navigation, aria-controls/tabpanel) — caught incomplete at Stage 6 QA.
+import { site } from '../../config/site.config';
+
+const tiered = site.services.filter((s) => s.pricingByVehicle);
+---
+
+<div class="price-selector rounded-card bg-surface-raised p-6 shadow-card" data-price-selector>
+  <div class="flex gap-2" role="tablist" aria-label="Vehicle size">
+    {(['sedan', 'suv', 'truck'] as const).map((size, i) => (
+      <button
+        type="button"
+        role="tab"
+        id={`vehicle-tab-${size}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-controls="vehicle-price-panel"
+        tabindex={i === 0 ? 0 : -1}
+        data-vehicle={size}
+        class="vehicle-tab min-h-11 rounded-button border border-border px-4 py-2 text-utility font-medium capitalize transition-colors duration-fast data-[active=true]:border-brand-primary data-[active=true]:bg-brand-primary data-[active=true]:text-text-inverse"
+        data-active={i === 0 ? 'true' : 'false'}
+      >
+        {size === 'suv' ? 'SUV' : size}
+      </button>
+    ))}
+  </div>
+
+  <dl
+    id="vehicle-price-panel"
+    role="tabpanel"
+    aria-labelledby="vehicle-tab-sedan"
+    aria-live="polite"
+    class="mt-6 space-y-4"
+  >
+    {tiered.map((s) => (
+      <div class="flex items-baseline justify-between">
+        <dt class="text-body">{s.name}</dt>
+        <dd
+          class="font-utility text-mono-lg font-medium text-brand-primary"
+          data-price-for={s.slug}
+          data-sedan={s.pricingByVehicle!.sedan}
+          data-suv={s.pricingByVehicle!.suv}
+          data-truck={s.pricingByVehicle!.truck}
+        >
+          ${s.pricingByVehicle!.sedan}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-price-selector]');
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.vehicle-tab'));
+    const panel = root.querySelector<HTMLElement>('#vehicle-price-panel');
+    const priceEls = root.querySelectorAll<HTMLElement>('[data-price-for]');
+
+    function activate(tab: HTMLButtonElement, focus = false) {
+      const vehicle = tab.dataset.vehicle as 'sedan' | 'suv' | 'truck';
+
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.dataset.active = String(active);
+        t.setAttribute('aria-selected', String(active));
+        t.tabIndex = active ? 0 : -1;
+      });
+      if (panel) panel.setAttribute('aria-labelledby', tab.id);
+
+      priceEls.forEach((el) => {
+        const price = el.dataset[vehicle];
+        if (price) el.textContent = `$${price}`;
+      });
+
+      if (focus) tab.focus();
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', (e) => {
+        let next = -1;
+        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next !== -1) {
+          e.preventDefault();
+          activate(tabs[next], true);
+        }
+      });
+    });
+  }
+</script>

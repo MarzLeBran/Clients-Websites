@@ -1,0 +1,33 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  // 'submit' renders a real <button type="submit"> instead of an <a> — use
+  // inside a <form>. An <a href="#"> never fires a form's submit event, so
+  // a form's send action must never use the href variant.
+  type?: 'link' | 'submit';
+  // One subtle shimmer sweep on hover — reserve for the single primary
+  // hero CTA, not every button on the page.
+  sweep?: boolean;
+}
+
+const { href, variant = 'primary', type = 'link', sweep = false } = Astro.props;
+const base = 'inline-flex items-center justify-center rounded-button px-5 py-2.5 min-h-11 text-body font-medium transition-all duration-standard';
+// Primary uses text-inverse (dark), not light text: orange-on-near-black
+// text at #F5F3EF only computes to 2.49:1 against the brand-primary orange
+// — fails AA. Dark text on that same orange is 7.12:1 (see brief/04-design-system.md).
+const styles = variant === 'primary'
+  ? 'bg-brand-primary text-text-inverse shadow-[0_12px_28px_-12px_var(--color-brand-glow)] hover:bg-brand-secondary hover:shadow-[0_16px_34px_-12px_var(--color-brand-glow)]'
+  : 'border border-border text-text-primary hover:bg-surface-raised';
+const sweepClass = sweep ? 'btn-sweep' : '';
+---
+
+{type === 'submit' ? (
+  <button type="submit" class={`${base} ${styles} ${sweepClass}`}>
+    <slot />
+  </button>
+) : (
+  <a href={href} class={`${base} ${styles} ${sweepClass}`}>
+    <slot />
+  </a>
+)}

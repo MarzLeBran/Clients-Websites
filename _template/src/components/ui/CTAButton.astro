@@ -1,0 +1,34 @@
+---
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  // 'submit' renders a real <button type="submit"> instead of an <a> — use
+  // inside a <form>. An <a href="#"> never fires a form's submit event, so
+  // a form's send action must never use the href variant. (Caught in
+  // production: this bug shipped a dead "Send" button before it was found.)
+  type?: 'link' | 'submit';
+  // One subtle shimmer sweep on hover — reserve for the single primary
+  // hero CTA, not every button on the page.
+  sweep?: boolean;
+}
+
+const { href, variant = 'primary', type = 'link', sweep = false } = Astro.props;
+const base = 'inline-flex items-center justify-center rounded-button px-5 py-2.5 min-h-11 text-body font-medium transition-all duration-standard';
+// Verify this pairing clears AA at Stage 4 — text-on-brand-primary contrast
+// depends entirely on the real colors chosen, not guaranteed by the token
+// names alone. See build-standards.
+const styles = variant === 'primary'
+  ? 'bg-brand-primary text-neutral-50 hover:opacity-90'
+  : 'border border-neutral-900 text-neutral-900 hover:bg-neutral-100';
+const sweepClass = sweep ? 'btn-sweep' : '';
+---
+
+{type === 'submit' ? (
+  <button type="submit" class={`${base} ${styles} ${sweepClass}`}>
+    <slot />
+  </button>
+) : (
+  <a href={href} class={`${base} ${styles} ${sweepClass}`}>
+    <slot />
+  </a>
+)}

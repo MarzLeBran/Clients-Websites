@@ -1,0 +1,38 @@
+---
+// Structural scaffolding only — a real launch should get a lawyer's eyes
+// on this before going live.
+import LegalLayout from '../layouts/LegalLayout.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+---
+
+<LegalLayout title={`Terms of Service | ${site.business.displayName}`} description="Terms of service.">
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Terms of Service', url: new URL('/terms/', Astro.site).toString() },
+    ]}
+  />
+  <h1 class="font-display text-display-lg font-bold">Terms of Service</h1>
+  <p>
+    By using this website and the services of {site.business.displayName}, you agree to the
+    following terms.
+  </p>
+  <h2 class="font-display text-display-md font-bold">Services</h2>
+  <p>
+    Service descriptions and pricing on this site are estimates. Final pricing is confirmed
+    before work begins.
+  </p>
+  <h2 class="font-display text-display-md font-bold">Messaging</h2>
+  <p>
+    By opting in to text messages, you agree to receive messages from {site.business.displayName}
+    at the number you provide. Message and data rates may apply. Reply STOP to opt out at any
+    time.
+  </p>
+  <h2 class="font-display text-display-md font-bold">Contact us</h2>
+  <p>
+    Questions about these terms can be sent to {site.business.email || 'us'} or by calling
+    {site.business.phone}.
+  </p>
+</LegalLayout>

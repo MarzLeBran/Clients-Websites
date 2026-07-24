@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+---
+
+<BaseLayout title={`About | ${site.business.displayName}`} description={`The story behind ${site.business.displayName}.`}>
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'About', url: new URL('/about/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="About" />
+    <!-- Written by site-copywriter at Stage 5, sourced only from intake. -->
+    <div class="max-w-3xl space-y-4 text-body"></div>
+  </section>
+</BaseLayout>

@@ -8,7 +8,7 @@ If a vertical's menu starts feeling exhausted, that's a signal to extend the men
 
 | Date | Client | Vertical | Photo grade | Hero | Services | Nav | Type direction | Signature element |
 |------|--------|----------|-------------|------|----------|-----|----------------|-------------------|
-| | | | | | | | | |
+| 2026-07-24 | Clean Lab by EZ | Mobile detailing | C | 06 color block | 08 package/tier cards | 06 left logo/center nav/CTA pill | Technical/performance (Space Grotesk + Inter + JetBrains Mono) | Live vehicle-size price selector (Sedan/SUV/Truck) |
 
 <!--
 Hero archetypes and services layouts are numbered in the design-playbook skill.

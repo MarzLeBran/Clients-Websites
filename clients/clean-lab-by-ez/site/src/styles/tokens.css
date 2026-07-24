@@ -1,0 +1,153 @@
+/*
+  Clean Lab by EZ — Direction A "Precision Lab" token layer.
+  Diverges from _template/'s generic sentinel on purpose (Stage 4).
+
+  Dark-first brand: named semantically (text-primary/text-inverse) rather
+  than forced into a numbered neutral-50..900 scale, since this site inverts
+  the usual "50 = lightest" convention entirely. See brief/04-design-system.md
+  for the full rationale and computed AA contrast ratios.
+*/
+@theme {
+  /* Color */
+  --color-surface:         #0B0B0D;
+  --color-surface-raised:  #1C1B1A;
+  /* Pixel-sampled from the client's real logo files (both the icon accent
+     and the "by EZ" script agree on this exact orange) — replaces the
+     Stage 4 approximation (#F47920). Computes to 8.16:1 vs surface,
+     7.14:1 vs surface-raised — both better than the approximation. */
+  --color-brand-primary:   #F78C16;
+  --color-brand-secondary: #C06D11;
+  --color-brand-accent:    #FFC34D;
+  /* Sampled from the logo: pure white, not the warm cream originally
+     chosen. 19.66:1 vs surface (was 17.74:1). */
+  --color-text-primary:    #FFFFFF;
+  --color-text-inverse:    #0B0B0D;
+  --color-text-muted:      #B8B4AC;
+  /* #5C6169 (Stage 4 original) only cleared 3:1 against --color-surface,
+     never validated against --color-surface-raised where it's most used
+     (form inputs, price-selector tabs) — 2.76:1 there, fails. #666B74
+     computes to 3.21:1 vs surface-raised and 3.67:1 vs surface. Caught by
+     Stage 6 a11y audit, verified independently. This is a FUNCTIONAL
+     border — real UI boundaries (inputs, tabs) that must stay a11y-safe. */
+  --color-border:          #666B74;
+  --color-divider:         #2A2C30;
+  /* DECORATIVE-only translucent lines (card/section borders, not
+     information-bearing) — never used where contrast actually matters. */
+  --color-line:             rgb(255 255 255 / 0.09);
+  --color-line-strong:      rgb(255 255 255 / 0.16);
+  /* Translucent brand tints — badge backgrounds, focus glows, shadow glows */
+  --color-brand-tint:       rgb(247 140 22 / 0.14);
+  --color-brand-glow:       rgb(247 140 22 / 0.45);
+
+  /* Type families — self-hosted via @fontsource, see BaseLayout for preload */
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, sans-serif;
+  --font-utility: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Type scale */
+  --text-display-xl: 3.5rem;
+  --text-display-lg: 2.5rem;
+  --text-display-md: 1.75rem;
+  --text-display-sm: 1.25rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-utility: 0.875rem;
+  --text-mono-lg: 1.5rem;
+  --text-mono: 1rem;
+
+  /* Spacing rhythm */
+  --spacing-section: 5rem;
+  --spacing-section-lg: 8rem;
+
+  /* Radii / shadow / motion */
+  --radius-card: 1rem;
+  --radius-button: 0.5rem;
+  --radius-badge: 999px;
+  --shadow-card: 0 4px 24px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.04);
+  /* Bigger, softer, negative-spread — reads as a floating card rather than
+     a flat drop shadow. Used on hover states and the hero's floating panel. */
+  --shadow-elevated: 0 18px 50px -22px rgb(0 0 0 / 0.85);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-standard: 200ms;
+  --duration-fast: 120ms;
+}
+
+@layer utilities {
+  /* Tailwind v4 can't express a two-part CSS transform+box-shadow hover
+     lift as a pure utility combo cleanly — a small custom class here beats
+     spreading five hover: utilities across every card usage. */
+  .card-lift {
+    transition: transform var(--duration-standard) var(--ease-standard),
+      border-color var(--duration-standard) var(--ease-standard),
+      box-shadow var(--duration-standard) var(--ease-standard);
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  /* Subtle one-word shine sweep — used on exactly one hero word, never more. */
+  @keyframes shine-sweep {
+    0% { background-position: 150% 0; }
+    45%, 100% { background-position: -90% 0; }
+  }
+  .text-shine {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-brand-primary) 40%,
+      var(--color-brand-accent) 50%,
+      var(--color-brand-primary) 60%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: var(--color-brand-primary);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .text-shine {
+      animation: shine-sweep 4.5s ease-in-out 1s infinite;
+    }
+  }
+
+  /* Button primary-hover shimmer sweep */
+  @keyframes btn-sweep {
+    0% { left: -60%; opacity: 1; }
+    100% { left: 130%; opacity: 0; }
+  }
+  .btn-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-sweep::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgb(255 255 255 / 0.35), transparent);
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .btn-sweep:hover::after {
+      animation: btn-sweep 0.8s ease;
+    }
+  }
+
+  /* One-time page-load entrance for above-the-fold hero content only — not
+     a scroll-triggered reveal repeated on every section (that pattern is
+     explicitly banned in design-playbook, reads as generic AI-site output). */
+  @keyframes fade-up-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-enter {
+      animation: fade-up-in 0.7s var(--ease-standard) both;
+    }
+    .hero-enter-delay {
+      animation-delay: 0.15s;
+    }
+  }
+}
