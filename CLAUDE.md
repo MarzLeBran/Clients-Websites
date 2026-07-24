@@ -33,6 +33,23 @@ Work in stages. Stages 1 and 2 stop for human approval.
 
 A `PreToolUse` hook blocks writes to `clients/*/site/` until `brief/02-design-directions.md` contains an `APPROVED:` line. If that hook fires, don't work around it — go back and get the direction approved.
 
+## Platform vs. brand — the line that keeps sites identical underneath
+
+**Platform layer — never varies per client, never forked.** Forms and lead
+handling (the `Lead` DTO in `lib/lead.ts`, `lib/lead-form.ts`, the
+`functions/api/lead.ts` proxy), schema components and `lib/schema.ts`,
+analytics/tracking wiring, accessibility behavior (focus, consent
+validation, disclosure nav, reduced-motion/forced-colors handling), legal
+pages, header/footer *behavior*, the booking abstraction, and the photo
+registry/`site.config.ts` shapes. These are modified **only in
+`_template/`** and synced to client sites wholesale — a client build must
+never fork one. If a client needs something a platform component can't do,
+extend the template so every future client inherits it.
+
+**Brand layer — fluid, per client.** Color tokens, type, imagery, copy,
+spacing, layout composition, iconography, and the signature element.
+This is the only layer that varies between clients.
+
 ## Rules
 
 1. **No invented facts.** Every claim on a site — years in business, certifications, awards, licence numbers, "family owned" — traces to `intake/`. If it isn't there, ask. Never fill a gap with a plausible guess.
