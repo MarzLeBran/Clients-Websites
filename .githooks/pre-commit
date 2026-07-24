@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Fast static gates (sentinel tokens, raw hex, consent) on any client site
+# with staged changes. Full verify runs in CI and via `npm run verify`.
+# Enabled with: git config core.hooksPath .githooks
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+sites=$(git diff --cached --name-only | grep -oE '^clients/[^/]+/site/' | sort -u || true)
+[ -z "$sites" ] && exit 0
+
+status=0
+for site in $sites; do
+  [ -d "$ROOT/$site" ] || continue
+  bash "$ROOT/scripts/verify.sh" "$ROOT/$site" --fast || status=1
+done
+if [ "$status" != 0 ]; then
+  echo "pre-commit: verify --fast failed — fix the issues above (or commit with --no-verify if you must)"
+fi
+exit $status

@@ -1,0 +1,12 @@
+{
+  "name": "custom-websites-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "bash scripts/verify.sh"
+  },
+  "devDependencies": {
+    "axe-core": "4.11.1",
+    "puppeteer-core": "24.23.0"
+  }
+}

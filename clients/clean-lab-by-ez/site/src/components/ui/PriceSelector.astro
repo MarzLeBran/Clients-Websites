@@ -31,28 +31,33 @@ const tiered = site.services.filter((s) => s.pricingByVehicle);
     ))}
   </div>
 
-  <dl
+  {/* role="tabpanel" lives on a wrapper div, not the <dl> itself — a role
+      on the <dl> would override its list semantics and orphan the dt/dd
+      pairs (axe: dlitem). */}
+  <div
     id="vehicle-price-panel"
     role="tabpanel"
     aria-labelledby="vehicle-tab-sedan"
     aria-live="polite"
-    class="mt-6 space-y-4"
+    class="mt-6"
   >
-    {tiered.map((s) => (
-      <div class="flex items-baseline justify-between">
-        <dt class="text-body">{s.name}</dt>
-        <dd
-          class="font-utility text-mono-lg font-medium text-brand-primary"
-          data-price-for={s.slug}
-          data-sedan={s.pricingByVehicle!.sedan}
-          data-suv={s.pricingByVehicle!.suv}
-          data-truck={s.pricingByVehicle!.truck}
-        >
-          ${s.pricingByVehicle!.sedan}
-        </dd>
-      </div>
-    ))}
-  </dl>
+    <dl class="space-y-4">
+      {tiered.map((s) => (
+        <div class="flex items-baseline justify-between">
+          <dt class="text-body">{s.name}</dt>
+          <dd
+            class="font-utility text-mono-lg font-medium text-brand-primary"
+            data-price-for={s.slug}
+            data-sedan={s.pricingByVehicle!.sedan}
+            data-suv={s.pricingByVehicle!.suv}
+            data-truck={s.pricingByVehicle!.truck}
+          >
+            ${s.pricingByVehicle!.sedan}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
 </div>
 
 <script>

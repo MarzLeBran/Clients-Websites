@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "verify": "echo '_template is never verified \u2014 its sentinels are intentional. Run verify on a client site.' && exit 1"
   },
   "dependencies": {
     "astro": "7.1.3",

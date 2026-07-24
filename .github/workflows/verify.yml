@@ -1,0 +1,39 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+
+      - name: Install verify tooling
+        run: npm ci
+
+      - name: Verify template builds clean (sentinels intact, never verified)
+        working-directory: _template
+        run: |
+          npm ci
+          npx astro check
+          npm run build
+
+      - name: Verify client sites (mode read from each site.config.ts)
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          status=0
+          for site in clients/*/site; do
+            [ -f "$site/package.json" ] || continue
+            (cd "$site" && npm ci)
+            bash scripts/verify.sh "$site" || status=1
+          done
+          exit $status
