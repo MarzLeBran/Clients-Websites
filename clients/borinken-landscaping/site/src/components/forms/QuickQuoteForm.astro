@@ -1,0 +1,67 @@
+---
+// Compact hero lead-capture form — name, phone, email, service, submit.
+// Shares src/lib/lead-form.ts with ContactForm so both behave identically;
+// this is just fewer fields for a hero-card context. Use this (or a plain
+// CTAButton) as the hero's floating panel — a real lead-capture form
+// standing in front of the hero photo/color-block converts noticeably
+// better than a CTA button alone.
+import { site } from '../../config/site.config';
+
+const businessName = site.business.displayName;
+const phone = site.business.phoneE164 || site.business.phone;
+---
+
+<div class="rounded-card bg-surface-alt p-6 shadow-card">
+  <p class="font-display text-display-sm font-bold">Get a Free Quote</p>
+  <p class="mt-1 text-utility">We'll text you back — usually within minutes.</p>
+
+  <form class="mt-5 space-y-3" data-lead-form data-mode={site.mode} data-endpoint={site.forms.endpoint} data-fallback-phone={phone}>
+    <label class="block">
+      <span class="sr-only">Name</span>
+      <input type="text" name="name" required placeholder="Name" class="w-full rounded-button border border-neutral-100 px-3 py-2.5" />
+    </label>
+    <label class="block">
+      <span class="sr-only">Phone</span>
+      <input type="tel" name="phone" required placeholder="Phone" class="w-full rounded-button border border-neutral-100 px-3 py-2.5" />
+    </label>
+    <label class="block">
+      <span class="sr-only">Email</span>
+      <input type="email" name="email" placeholder="Email" class="w-full rounded-button border border-neutral-100 px-3 py-2.5" />
+    </label>
+    <label class="block">
+      <span class="sr-only">Service</span>
+      <select name="service" class="w-full rounded-button border border-neutral-100 px-3 py-2.5">
+        {site.services.map((s) => <option value={s.slug}>{s.name}</option>)}
+      </select>
+    </label>
+
+    {site.forms.smsConsentRequired && (
+      <label class="flex items-start gap-2 text-utility">
+        {/* No native `required`: lead-form.ts validates on submit with
+            aria-invalid + a visible inline error instead of the browser
+            tooltip. Still hardcoded unchecked — never default-checked. */}
+        <input type="checkbox" name="smsConsent" checked={false} class="mt-0.5 accent-brand-primary" />
+        <span>
+          <span aria-hidden="true">*</span><span class="sr-only">(required)</span>
+          <span data-consent-language>I agree to receive texts from {businessName} about my request. Msg &amp; data rates may apply. Reply STOP to opt out. See <a href="/privacy/" class="underline">Privacy</a> &amp; <a href="/terms/" class="underline">Terms</a>.</span>
+        </span>
+      </label>
+    )}
+    {site.forms.smsConsentRequired && (
+      <p data-consent-error hidden role="alert" class="text-utility">
+        You must agree to receive text messages so we can reply to your quote.
+      </p>
+    )}
+
+    <div data-form-status role="status" aria-live="polite" class="hidden text-utility"></div>
+
+    <button type="submit" class="min-h-11 w-full rounded-button bg-brand-primary px-5 py-2.5 font-medium text-neutral-50">
+      Get My Free Quote
+    </button>
+  </form>
+</div>
+
+<script>
+  import { initLeadForms } from '../../lib/lead-form';
+  initLeadForms();
+</script>

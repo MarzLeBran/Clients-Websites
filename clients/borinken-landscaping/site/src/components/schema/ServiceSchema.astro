@@ -1,0 +1,14 @@
+---
+import { site } from '../../config/site.config';
+import { buildServiceSchema } from '../../lib/schema';
+
+interface Props {
+  service: { name: string; slug: string; priceFrom?: number };
+  areaServed?: string;
+}
+
+const { service, areaServed } = Astro.props;
+const json = buildServiceSchema(service, site, areaServed);
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(json)} />

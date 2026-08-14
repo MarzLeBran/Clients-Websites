@@ -1,0 +1,13 @@
+---
+import { site } from '../../config/site.config';
+import { buildLocalBusinessSchema } from '../../lib/schema';
+
+interface Props {
+  type?: string;
+}
+
+const { type } = Astro.props;
+const json = buildLocalBusinessSchema(site, type);
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(json)} />

@@ -1,0 +1,59 @@
+---
+interface Props {
+  // srcset/width/height come from lib/photos.ts getOptimizedPhoto — pass
+  // them through so thumbnails are responsive and never shift layout.
+  images: { src: string; alt: string; srcset?: string; width?: number; height?: number }[];
+}
+
+const { images } = Astro.props;
+---
+
+<div class="lightbox-gallery grid grid-cols-2 gap-4 md:grid-cols-3" data-lightbox>
+  {images.map((img, i) => (
+    <button
+      type="button"
+      class="lightbox-trigger card-lift group aspect-[4/3] overflow-hidden rounded-card border border-line"
+      data-index={i}
+    >
+      <img
+        src={img.src}
+        srcset={img.srcset}
+        sizes="(min-width: 768px) 33vw, 50vw"
+        width={img.width}
+        height={img.height}
+        alt={img.alt}
+        class="h-full w-full object-cover transition-transform duration-[500ms] ease-out group-hover:scale-105"
+        loading="lazy"
+      />
+    </button>
+  ))}
+</div>
+
+<dialog class="lightbox-dialog rounded-card border-0 bg-surface p-0" data-lightbox-dialog>
+  <button
+    type="button"
+    class="absolute right-3 top-3 flex min-h-11 min-w-11 items-center justify-center rounded-button bg-surface-alt text-neutral-900"
+    data-lightbox-close
+    aria-label="Close"
+  >✕</button>
+  <img data-lightbox-image src="" alt="" class="max-h-[80vh] max-w-[90vw]" />
+</dialog>
+
+<script>
+  const gallery = document.querySelector<HTMLElement>('[data-lightbox]');
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox-dialog]');
+  const img = document.querySelector<HTMLImageElement>('[data-lightbox-image]');
+  const close = document.querySelector<HTMLButtonElement>('[data-lightbox-close]');
+  if (gallery && dialog && img && close) {
+    gallery.querySelectorAll<HTMLButtonElement>('.lightbox-trigger').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const src = btn.querySelector('img')?.getAttribute('src') ?? '';
+        const alt = btn.querySelector('img')?.getAttribute('alt') ?? '';
+        img.src = src;
+        img.alt = alt;
+        dialog.showModal();
+      });
+    });
+    close.addEventListener('click', () => dialog.close());
+  }
+</script>

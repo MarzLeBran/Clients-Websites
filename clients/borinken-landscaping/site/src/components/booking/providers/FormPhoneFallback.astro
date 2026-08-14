@@ -1,0 +1,18 @@
+---
+// booking.provider === 'none': never render an empty embed. Fall back to
+// the contact form plus a direct phone CTA.
+import { site } from '../../../config/site.config';
+import { telHref, formatPhone } from '../../../lib/format';
+import ContactForm from '../../forms/ContactForm.astro';
+
+const phone = site.business.phoneE164 || site.business.phone;
+---
+
+<div class="space-y-6">
+  {phone && (
+    <a href={telHref(phone)} class="block text-display-md font-display font-bold">
+      Call {formatPhone(phone)}
+    </a>
+  )}
+  <ContactForm />
+</div>

@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTAButton from '../components/ui/CTAButton.astro';
+---
+
+<BaseLayout title="Page not found" description="Page not found.">
+  <section class="px-6 py-24 text-center">
+    <h1 class="font-display text-display-xl font-bold">Page not found</h1>
+    <p class="mt-4 text-body">The page you're looking for doesn't exist.</p>
+    <div class="mt-8">
+      <CTAButton href="/">Back home</CTAButton>
+    </div>
+  </section>
+</BaseLayout>

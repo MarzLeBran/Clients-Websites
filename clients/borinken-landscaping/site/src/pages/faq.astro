@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import FAQPageSchema from '../components/schema/FAQPageSchema.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+import { getCollection } from 'astro:content';
+
+const faqs = (await getCollection('faqs')).filter((f) => f.data.page === 'sitewide' || f.data.page === 'homepage');
+---
+
+<BaseLayout title={`FAQ | ${site.business.displayName}`} description={`Frequently asked questions about ${site.business.displayName}.`}>
+  {faqs.length > 0 && <FAQPageSchema slot="head" faqs={faqs.map((f) => f.data)} />}
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'FAQ', url: new URL('/faq/', Astro.site).toString() },
+    ]}
+  />
+  <section class="px-6 py-16">
+    <SectionHeading title="Frequently asked questions" />
+    <div class="max-w-3xl space-y-6">
+      {faqs.map((f) => (
+        <div>
+          <h3 class="font-medium">{f.data.question}</h3>
+          <p class="text-body">{f.data.answer}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

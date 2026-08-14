@@ -1,0 +1,11 @@
+---
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+---
+
+<div class="ghl-embed aspect-[4/5] w-full overflow-hidden rounded-card">
+  <iframe src={url} title="Book an appointment" class="h-full w-full" loading="lazy"></iframe>
+</div>

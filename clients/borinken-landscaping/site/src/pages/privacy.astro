@@ -1,0 +1,40 @@
+---
+// Required for A2P 10DLC registration. Structural scaffolding only — a real
+// launch should get a lawyer's eyes on this before going live.
+import LegalLayout from '../layouts/LegalLayout.astro';
+import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
+import { site } from '../config/site.config';
+---
+
+<LegalLayout title={`Privacy Policy | ${site.business.displayName}`} description="Privacy policy.">
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Privacy Policy', url: new URL('/privacy/', Astro.site).toString() },
+    ]}
+  />
+  <h1 class="font-display text-display-lg font-bold">Privacy Policy</h1>
+  <p>
+    {site.business.displayName} ("we," "us," or "our") respects your privacy. This policy
+    explains what information we collect, how we use it, and your choices.
+  </p>
+  <h2 class="font-display text-display-md font-bold">Information we collect</h2>
+  <p>
+    When you contact us through this website, we collect the information you provide: name,
+    phone number, email address, and any details about the service you're requesting.
+  </p>
+  <h2 class="font-display text-display-md font-bold">SMS / text messaging</h2>
+  <p>
+    Mobile information will not be shared with third parties or affiliates for marketing or
+    promotional purposes. Information sharing to subcontractors in support services, such as
+    customer service, is permitted. All other use case categories, including but not limited to
+    marketing and other affiliate marketing purposes, exclude text messaging originator opt-in
+    data and consent; this information will not be shared with any third parties.
+  </p>
+  <h2 class="font-display text-display-md font-bold">Contact us</h2>
+  <p>
+    Questions about this policy can be sent to {site.business.email || 'us'} or by calling
+    {site.business.phone}.
+  </p>
+</LegalLayout>

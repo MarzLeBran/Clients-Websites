@@ -208,6 +208,16 @@ def rewrite_tokens(css: str, values: dict[str, str]) -> tuple[str, list[str]]:
         return match.group(0)
 
     out = re.sub(r'(--color-[a-z0-9-]+):(\s*)([^;]+);', sub, css)
+    # The _template header describes the sentinel placeholder verbatim
+    # (including the literal string "#FF00FF"), which trips verify.sh's
+    # sentinel check even after real values are written. Once tokens are
+    # actually derived, that description is stale — replace it.
+    out = re.sub(
+        r'Every value below is a loud placeholder \(#FF00FF / TODO\)\.',
+        'Values derived by scripts/derive-tokens.py from the client logo.',
+        out,
+    )
+    out = re.sub(r' /\* TODO\(stage-4\) \*/', '', out)
     return out, applied
 
 

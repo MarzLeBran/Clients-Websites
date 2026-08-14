@@ -1,0 +1,181 @@
+---
+// Mobile nav toggle + Services mega-menu are the only client JS in the
+// header. Mega-menu: "Services" expands into a real picker with an image
+// per service (when service.heroImage is set) rather than a plain link —
+// proven pattern across comparable home-services sites, converts better
+// than sending visitors straight to an index page. Falls back to a plain
+// icon-free row if a client hasn't set service images yet.
+import { site } from '../../config/site.config';
+import { telHref, formatPhone } from '../../lib/format';
+import { getCollection } from 'astro:content';
+import CTAButton from '../ui/CTAButton.astro';
+import Logo from './Logo.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+
+const navRest = [
+  { label: 'Service Areas', href: '/service-areas/' },
+  { label: 'About', href: '/about/' },
+  { label: 'Reviews', href: '/reviews/' },
+  { label: 'FAQ', href: '/faq/' },
+  { label: 'Contact', href: '/contact/' },
+];
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-transparent transition-[background-color,box-shadow,border-color] duration-standard"
+  data-header
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+    <a href="/" class="flex items-center">
+      <Logo />
+    </a>
+    <nav class="hidden gap-6 md:flex" aria-label="Primary">
+      <ul class="flex items-center gap-6">
+        {services.length > 0 ? (
+          <li class="relative" data-mega-menu>
+            {/* Disclosure pattern, not role="menu": this is a set of nav
+                links, so a button with aria-expanded/aria-controls is the
+                correct semantic. The closed panel is display:none (`hidden`),
+                so its links are unreachable by Tab without extra wiring. */}
+            <button
+              type="button"
+              class="flex min-h-11 items-center gap-1.5 text-body hover:text-brand-primary"
+              aria-expanded="false"
+              aria-controls="services-mega-menu"
+              data-mega-menu-trigger
+            >
+              Services
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="transition-transform duration-fast" data-mega-menu-chevron>
+                <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <div
+              id="services-mega-menu"
+              class="absolute left-1/2 top-full hidden w-[640px] -translate-x-1/2 pt-3"
+              data-mega-menu-panel
+            >
+              <div class="grid grid-cols-2 gap-2 rounded-card border border-line bg-surface-alt p-4 shadow-card">
+                {services.map((s) => (
+                  <a
+                    href={s.data.serviceTier === 'addon' ? '/services/#add-ons' : `/services/${s.data.slug}/`}
+                    class="flex items-center gap-3 rounded-button p-2 transition-colors duration-fast hover:bg-surface"
+                  >
+                    {s.data.heroImage && (
+                      <img
+                        src={s.data.heroImage}
+                        alt=""
+                        class="h-14 w-14 flex-shrink-0 rounded-button object-cover"
+                      />
+                    )}
+                    <span>
+                      <span class="block text-body font-medium">{s.data.name}</span>
+                      <span class="block text-utility">{s.data.shortDescription}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </li>
+        ) : (
+          <li><a href="/services/" class="flex min-h-11 items-center text-body hover:text-brand-primary">Services</a></li>
+        )}
+        {navRest.map((item) => (
+          <li><a href={item.href} class="flex min-h-11 items-center text-body hover:text-brand-primary">{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="flex items-center gap-3">
+      {site.business.phone && (
+        <a href={telHref(site.business.phoneE164)} class="hidden text-body font-medium sm:block">
+          {formatPhone(site.business.phoneE164 || site.business.phone)}
+        </a>
+      )}
+      <CTAButton href="/contact/">Get a Quote</CTAButton>
+      <button
+        type="button"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-button border border-neutral-100 md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-mobile-nav-toggle
+      >
+        <span class="sr-only">Menu</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" class="hidden border-t border-neutral-100 px-6 py-4 md:hidden" aria-label="Primary mobile" data-mobile-nav>
+    <ul class="flex flex-col gap-1">
+      <li><a href="/services/" class="block min-h-11 py-2.5 text-body hover:text-brand-primary">Services</a></li>
+      {navRest.map((item) => (
+        <li><a href={item.href} class="block min-h-11 py-2.5 text-body hover:text-brand-primary">{item.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-mobile-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  if (toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      panel.classList.toggle('hidden', isOpen);
+    });
+  }
+
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    const setScrolled = () => {
+      const scrolled = window.scrollY > 12;
+      header.classList.toggle('bg-surface/95', scrolled);
+      header.classList.toggle('backdrop-blur', scrolled);
+      header.classList.toggle('border-line', scrolled);
+      header.classList.toggle('shadow-elevated', scrolled);
+    };
+    setScrolled();
+    window.addEventListener('scroll', setScrolled, { passive: true });
+  }
+
+  // Services mega-menu: click-toggle (works on touch) plus hover-intent on
+  // desktop, closes on Escape or an outside click.
+  const menuRoot = document.querySelector<HTMLElement>('[data-mega-menu]');
+  const menuTrigger = document.querySelector<HTMLButtonElement>('[data-mega-menu-trigger]');
+  const menuPanel = document.querySelector<HTMLElement>('[data-mega-menu-panel]');
+  const menuChevron = document.querySelector<SVGElement>('[data-mega-menu-chevron]');
+  if (menuRoot && menuTrigger && menuPanel) {
+    let hoverTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const setOpen = (open: boolean) => {
+      menuTrigger.setAttribute('aria-expanded', String(open));
+      menuPanel.classList.toggle('hidden', !open);
+      menuChevron?.style.setProperty('transform', open ? 'rotate(180deg)' : '');
+    };
+
+    menuTrigger.addEventListener('click', () => {
+      setOpen(menuTrigger.getAttribute('aria-expanded') !== 'true');
+    });
+    menuRoot.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      setOpen(true);
+    });
+    menuRoot.addEventListener('mouseleave', () => {
+      hoverTimer = setTimeout(() => setOpen(false), 150);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menuTrigger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        // Escape returns focus to the trigger so keyboard users aren't
+        // dropped on a now-hidden element.
+        menuTrigger.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!menuRoot.contains(e.target as Node)) setOpen(false);
+    });
+  }
+</script>

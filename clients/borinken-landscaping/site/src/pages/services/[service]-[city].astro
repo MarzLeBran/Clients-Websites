@@ -1,0 +1,85 @@
+---
+// City×service revenue pages. Capped structurally: only combinations with a
+// real cityServicePages entry (with a genuinely local `localAngle`) get
+// built — never generate these from a plain city×service cross-product.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import CTAButton from '../../components/ui/CTAButton.astro';
+import ServiceSchema from '../../components/schema/ServiceSchema.astro';
+import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
+import { getCollection, render } from 'astro:content';
+import { truncateForMeta } from '../../lib/format';
+import { site } from '../../config/site.config';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('cityServicePages');
+  const services = await getCollection('services');
+  const areas = await getCollection('areas');
+
+  // City×service pages are for primary revenue services only — secondary
+  // and add-on tiers never get per-city URLs, even if an entry is authored.
+  return pages
+    .filter(
+      (page) =>
+        services.find((s) => s.data.slug === page.data.serviceSlug)?.data.serviceTier === 'primary'
+    )
+    .map((page) => {
+      const service = services.find((s) => s.data.slug === page.data.serviceSlug);
+      const area = areas.find((a) => a.data.slug === page.data.citySlug);
+      return {
+        params: { service: page.data.serviceSlug, city: page.data.citySlug },
+        props: { page, service, area },
+      };
+    });
+}
+
+const { page, service, area } = Astro.props;
+const { Content } = await render(page);
+const heading = service && area ? `${service.data.name} in ${area.data.city}, ${area.data.state}` : page.id;
+const title = `${heading} | ${site.business.displayName}`;
+const url = new URL(`/services/${page.data.serviceSlug}-${page.data.citySlug}/`, Astro.site).toString();
+// Inherits the area's photo rather than needing a unique one per
+// city×service combination.
+const banner = area?.data.heroImage;
+---
+
+<BaseLayout title={title} description={truncateForMeta(page.data.localAngle)}>
+  {service && area && (
+    <ServiceSchema
+      slot="head"
+      service={{ name: service.data.name, slug: service.data.slug, priceFrom: service.data.priceFrom }}
+      areaServed={area.data.city}
+    />
+  )}
+  <BreadcrumbListSchema
+    slot="head"
+    crumbs={[
+      { name: 'Home', url: Astro.site?.toString() ?? '/' },
+      { name: 'Services', url: new URL('/services/', Astro.site).toString() },
+      { name: heading, url },
+    ]}
+  />
+
+  <article>
+    <div class="px-6 pt-16">
+      <div class="mx-auto max-w-3xl">
+        <SectionHeading title={heading} />
+      </div>
+    </div>
+
+    {banner && (
+      <div class="mx-auto mb-12 max-w-4xl px-6">
+        <img src={banner} alt="" class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated" />
+      </div>
+    )}
+
+    <div class="px-6">
+      <div class="mx-auto max-w-3xl space-y-4 text-body">
+        <Content />
+      </div>
+      <div class="mx-auto mt-10 max-w-3xl">
+        <CTAButton href="/contact/">Get a Quote</CTAButton>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

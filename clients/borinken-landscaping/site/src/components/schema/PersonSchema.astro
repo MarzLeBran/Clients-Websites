@@ -1,0 +1,12 @@
+---
+import { buildPersonSchema } from '../../lib/schema';
+
+interface Props {
+  member: { name: string; role: string; photo?: string };
+}
+
+const { member } = Astro.props;
+const json = buildPersonSchema(member);
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(json)} />
