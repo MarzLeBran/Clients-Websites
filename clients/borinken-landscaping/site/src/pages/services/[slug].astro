@@ -9,7 +9,7 @@ import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.a
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import { site } from '../../config/site.config';
-import { PHOTO_REGISTRY, selectServiceKeys } from '../../lib/photos';
+import { getServicePagePhoto } from '../../lib/photos';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -27,8 +27,7 @@ const { service } = Astro.props;
 const { Content } = await render(service);
 const faqs = (await getCollection('faqs')).filter((f) => f.data.serviceSlug === service.data.slug);
 const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
-const heroKey = selectServiceKeys(service.data.slug)[0];
-const heroPhoto = heroKey ? PHOTO_REGISTRY[heroKey] : undefined;
+const heroPhoto = getServicePagePhoto(service.data.slug);
 ---
 
 <BaseLayout

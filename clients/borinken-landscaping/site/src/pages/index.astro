@@ -9,20 +9,11 @@ import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro'
 import { site } from '../config/site.config';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import { PHOTO_REGISTRY, getBeforeAfterPair } from '../lib/photos';
+import { getBeforeAfterPair, getServiceMainPhoto } from '../lib/photos';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 const testimonials = await getCollection('testimonials');
 const { before, after } = getBeforeAfterPair();
-// Explicit, non-repeating assignment — the library only has 5 real photos,
-// so each service row gets a distinct one on purpose rather than a modulo
-// pattern that can silently duplicate one photo across two rows.
-const servicePhotoBySlug: Record<string, (typeof PHOTO_REGISTRY)[keyof typeof PHOTO_REGISTRY]> = {
-  mowing: PHOTO_REGISTRY['hero-crew-trimming'],
-  'weed-eating': PHOTO_REGISTRY['trailer-rig'],
-  planting: PHOTO_REGISTRY['crew-shirt-logo'],
-  edging: PHOTO_REGISTRY['topiary-after'],
-};
 ---
 
 <BaseLayout title={site.seo.defaultTitle} description={site.seo.defaultDescription}>
@@ -38,7 +29,7 @@ const servicePhotoBySlug: Record<string, (typeof PHOTO_REGISTRY)[keyof typeof PH
       beforeAlt={before.alt}
       afterAlt={after.alt}
     >
-      <CoquiMark slot="handle" class="hero-enter h-11 w-11 rounded-badge bg-brand-primary p-2 text-text-inverse shadow-elevated" aria-hidden={false} />
+      <CoquiMark slot="handle" class="hero-enter h-16 w-16 rounded-badge bg-brand-primary p-3 text-text-inverse shadow-elevated" aria-hidden={false} />
     </BeforeAfterSlider>
 
     <CoquiMark class="pointer-events-none absolute -bottom-16 -right-16 h-80 w-80 text-brand-primary/10 md:h-96 md:w-96" />
@@ -58,10 +49,15 @@ const servicePhotoBySlug: Record<string, (typeof PHOTO_REGISTRY)[keyof typeof PH
   {/* Services — alternating full-width photo rows, coquí-mark dividers. */}
   <section class="px-6 py-16 md:py-20" id="services-preview">
     <div class="mx-auto max-w-5xl">
-      <SectionHeading eyebrow="What we do" title="Four services, done right every time" level="h2" />
+      <SectionHeading eyebrow="What we do" title="Our services" level="h2" />
+      <p class="-mt-4 mb-8 max-w-prose text-body text-text-muted">
+        These are Hiram's main services — not every property needs all of them, and he also
+        takes on custom landscaping requests beyond this list. Tell him what you need.
+      </p>
       <div class="divide-y divide-line">
         {services.map((s, i) => {
-          const photo = servicePhotoBySlug[s.data.slug];
+          const photo = getServiceMainPhoto(s.data.slug);
+          if (!photo) return null;
           return (
             <div class={`grid items-center gap-8 py-10 md:grid-cols-2 ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}>
               <div class="overflow-hidden rounded-card">

@@ -13,10 +13,10 @@ const { markOnly = false, class: className = '' } = Astro.props;
 ---
 
 {markOnly ? (
-  <CoquiMark class={`h-9 w-9 ${className}`} aria-hidden={false} />
+  <CoquiMark class={`h-14 w-14 ${className}`} aria-hidden={false} />
 ) : (
-  <span class={`inline-flex items-center gap-2.5 ${className}`}>
-    <CoquiMark class="h-8 w-8 flex-shrink-0" aria-hidden={false} />
+  <span class={`inline-flex items-center gap-3 ${className}`}>
+    <CoquiMark class="h-12 w-12 flex-shrink-0" aria-hidden={false} />
     <span class="font-display text-display-sm font-semibold">{site.business.displayName}</span>
   </span>
 )}

@@ -117,11 +117,16 @@ export const site: SiteConfig = {
   },
   areas: [], // empty — no confirmed city list, see brief/03-architecture.md
   serviceAreaLabel: 'Brevard County, FL', // confirmed — county-wide, not a specific city list
+  // Revised 2026-08-15 — operator-confirmed final list, replacing the
+  // original 4. Weed eating and edging are real things Hiram does but not
+  // stand-alone services worth their own page; folded into other service
+  // copy where relevant instead.
   services: [
     { name: 'Mowing', slug: 'mowing', isPrimary: true },
-    { name: 'Weed Eating', slug: 'weed-eating', isPrimary: true },
-    { name: 'Planting', slug: 'planting', isPrimary: true },
-    { name: 'Edging', slug: 'edging', isPrimary: true },
+    { name: 'Mulch & Planting', slug: 'mulch-planting', isPrimary: true },
+    { name: 'Hedge & Tree Trimming', slug: 'hedge-tree-trimming', isPrimary: true },
+    { name: 'Palm Tree Pruning', slug: 'palm-tree-pruning', isPrimary: true },
+    { name: 'Landscape Design', slug: 'landscape-design', isPrimary: true },
   ],
   social: {
     google: '', // PENDING — real GBP found via search, exact profile URL not captured; grab at build time

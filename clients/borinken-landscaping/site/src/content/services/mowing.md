@@ -3,14 +3,12 @@ name: Mowing
 slug: mowing
 serviceTier: primary
 isPrimary: true
-shortDescription: Regular lawn mowing that keeps your yard looking cared for, week after week.
+shortDescription: Regular mowing to keep your lawn cut clean and consistent, week in and week out.
 order: 0
 ---
 
-Florida grass doesn't take a break, especially through the growing season, and a yard that gets skipped for a couple of weeks starts to show it fast. Hiram mows on a set schedule so your lawn stays even and doesn't get away from you — no scrambling before company comes over, no letter from the HOA.
+Mowing is the service most people call about first, and it's the one that keeps the rest of the yard looking taken care of. Hiram cuts on a schedule, not whenever he gets around to it, so you're not the one lawn on the street that starts looking shaggy by Thursday. Weed eating along fence lines, mailboxes, and beds, and edging along the driveway and walkways, come with it — the trim work is what actually makes a mowed lawn look finished.
 
-Every property is different: lot size, grass type, how much shade you've got, how fast things are growing that month. Mowing frequency gets set based on what your yard actually needs, not a one-size-fits-all route.
+This isn't a crew rotating through your neighborhood in a rush. It's Hiram and his truck and trailer, showing up and doing the cut himself.
 
-This isn't a drive-by service. Clippings get cleaned up, edges get respected, and beds don't get chewed up by a mower running too close. If something looks off — a dry patch, a spot that's not draining right — you'll hear about it, because Hiram's the one out there mowing it, not a crew he's never met.
-
-Want your lawn on a regular mowing schedule? Call or text (321) 271-1134 and Hiram will walk your property and tell you what it needs.
+If you're on a weekly or biweekly schedule, or you just need the yard brought back in line before it gets out of hand, call or text and he'll get you set up.

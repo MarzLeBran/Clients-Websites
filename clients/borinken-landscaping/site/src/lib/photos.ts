@@ -2,24 +2,30 @@ import { getImage } from 'astro:assets';
 import heroCrewTrimming from '../assets/photos/hero-crew-trimming-topiary.jpg';
 import topiaryBefore from '../assets/photos/topiary-before.jpg';
 import topiaryAfter from '../assets/photos/topiary-after.jpg';
-import trailerRig from '../assets/photos/trailer-rig.jpg';
-import crewShirtLogo from '../assets/photos/crew-shirt-logo.jpg';
+import hedgeTrimmingPoolMain from '../assets/photos/hedge-trimming-pool-main.jpg';
+import hedgeTrimmingCurbsidePage from '../assets/photos/hedge-trimming-curbside-page.jpg';
+import landscapeDesignMulchIslandMain from '../assets/photos/landscape-design-mulch-island-main.jpg';
+import landscapeDesignPlantingCrewPage from '../assets/photos/landscape-design-planting-crew-page.jpg';
+import mowingTrailerMain from '../assets/photos/mowing-trailer-main.jpg';
+import mowingFreshLawnPage from '../assets/photos/mowing-fresh-lawn-page.jpg';
+import mulchPlantingPalmsMain from '../assets/photos/mulch-planting-palms-main.jpg';
+import mulchPlantingFoundationBedPage from '../assets/photos/mulch-planting-foundation-bed-page.jpg';
+import palmPruningActionMain from '../assets/photos/palm-pruning-action-main.jpg';
+import palmPruningFramedHousePage from '../assets/photos/palm-pruning-framed-house-page.jpg';
 
-// Central metadata registry of the Stage-0-audit-approved "usable" photos
-// (see brief/00-audit.md) — the audit grade gates entry: only photos rated
-// usable belong here. Grade C library (5 real photos) — reuse across pages
-// is expected and honest, not a bug. The hero photo is a composite: the
-// real photo pasted back pixel-exact over an AI-widened background after an
-// earlier outpaint attempt garbled the real logo text — see intake for the
-// full provenance. Everything else here is untouched, straight from the
-// client's own camera roll.
+// Central metadata registry of the client's approved photos. Second delivery
+// (2026-08-15) — operator sorted a batch of real photos into named pairs per
+// service ("X main.jpg" = homepage row thumbnail, "X page.jpg" = that
+// service's own page hero), replacing the thinner original library. The
+// hero slider photos (topiary before/after + the composited wide crew shot)
+// are unrelated to this batch and stay as the homepage hero.
 
 export interface PhotoMeta {
   img: ImageMetadata;
   alt: string;
   orientation: 'portrait' | 'landscape' | 'square';
   quality: 'strong';
-  subject: 'action-detail' | 'before' | 'after' | 'equipment';
+  subject: 'action-detail' | 'before' | 'after' | 'equipment' | 'result';
   serviceRelevance: string[];
   heroCandidate: boolean;
   containsPeople: boolean;
@@ -34,7 +40,7 @@ export const PHOTO_REGISTRY = {
     orientation: 'landscape',
     quality: 'strong',
     subject: 'action-detail',
-    serviceRelevance: ['edging', 'mowing'],
+    serviceRelevance: ['hedge-tree-trimming'],
     heroCandidate: true,
     containsPeople: true,
     containsLogo: true,
@@ -46,7 +52,7 @@ export const PHOTO_REGISTRY = {
     orientation: 'portrait',
     quality: 'strong',
     subject: 'before',
-    serviceRelevance: ['edging'],
+    serviceRelevance: ['hedge-tree-trimming'],
     heroCandidate: false,
     containsPeople: false,
     containsLogo: false,
@@ -58,34 +64,130 @@ export const PHOTO_REGISTRY = {
     orientation: 'portrait',
     quality: 'strong',
     subject: 'after',
-    serviceRelevance: ['edging'],
+    serviceRelevance: ['hedge-tree-trimming'],
     heroCandidate: false,
     containsPeople: false,
     containsLogo: false,
     beforeAfter: true,
   },
-  'trailer-rig': {
-    img: trailerRig,
-    alt: 'Borinken Landscaping branded trailer and truck parked at a job site',
+  'hedge-trimming-pool-main': {
+    img: hedgeTrimmingPoolMain,
+    alt: 'Borinken Landscaping crew member on a ladder trimming a large rounded hedge beside a lakeside pool enclosure, branded shirt visible',
     orientation: 'portrait',
     quality: 'strong',
+    subject: 'action-detail',
+    serviceRelevance: ['hedge-tree-trimming'],
+    heroCandidate: false,
+    containsPeople: true,
+    containsLogo: true,
+    beforeAfter: false,
+  },
+  'hedge-trimming-curbside-page': {
+    img: hedgeTrimmingCurbsidePage,
+    alt: 'Crew member using a pole saw to trim a curbside tree canopy, branded trailer parked nearby',
+    orientation: 'portrait',
+    quality: 'strong',
+    subject: 'action-detail',
+    serviceRelevance: ['hedge-tree-trimming'],
+    heroCandidate: false,
+    containsPeople: true,
+    containsLogo: true,
+    beforeAfter: false,
+  },
+  'landscape-design-mulch-island-main': {
+    img: landscapeDesignMulchIslandMain,
+    alt: 'Finished landscape design: a large curved mulch island bed with a palm tree and colorful croton plantings in a front yard',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'result',
+    serviceRelevance: ['landscape-design'],
+    heroCandidate: true,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'landscape-design-planting-crew-page': {
+    img: landscapeDesignPlantingCrewPage,
+    alt: 'Two Borinken Landscaping crew members installing new plants along a front walkway bed',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'action-detail',
+    serviceRelevance: ['landscape-design'],
+    heroCandidate: false,
+    containsPeople: true,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'mowing-trailer-main': {
+    img: mowingTrailerMain,
+    alt: 'Borinken Landscaping branded trailer, parked curbside, with logo, phone number, and Facebook handle visible',
+    orientation: 'landscape',
+    quality: 'strong',
     subject: 'equipment',
-    serviceRelevance: ['mowing', 'weed-eating', 'planting', 'edging'],
+    serviceRelevance: ['mowing'],
     heroCandidate: false,
     containsPeople: false,
     containsLogo: true,
     beforeAfter: false,
   },
-  'crew-shirt-logo': {
-    img: crewShirtLogo,
-    alt: 'Borinken Landscaping crew member wearing the branded work shirt',
+  'mowing-fresh-lawn-page': {
+    img: mowingFreshLawnPage,
+    alt: 'Freshly mowed, healthy green lawn in front of a light blue Florida home',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'result',
+    serviceRelevance: ['mowing'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'mulch-planting-palms-main': {
+    img: mulchPlantingPalmsMain,
+    alt: 'Fresh red mulch bed with young palm trees planted beside a garage entrance',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'result',
+    serviceRelevance: ['mulch-planting'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'mulch-planting-foundation-bed-page': {
+    img: mulchPlantingFoundationBedPage,
+    alt: 'Fresh mulch bed with new foundation shrubs planted along a home’s front window',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'result',
+    serviceRelevance: ['mulch-planting'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'palm-pruning-action-main': {
+    img: palmPruningActionMain,
+    alt: 'Crew member on a ladder using a chainsaw to prune dead fronds high up a tall palm tree',
     orientation: 'portrait',
     quality: 'strong',
     subject: 'action-detail',
-    serviceRelevance: ['planting', 'weed-eating'],
+    serviceRelevance: ['palm-tree-pruning'],
     heroCandidate: false,
     containsPeople: true,
-    containsLogo: true,
+    containsLogo: false,
+    beforeAfter: false,
+  },
+  'palm-pruning-framed-house-page': {
+    img: palmPruningFramedHousePage,
+    alt: 'Two neatly pruned palm trees framing the entrance of a Florida home',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'result',
+    serviceRelevance: ['palm-tree-pruning'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
     beforeAfter: false,
   },
 } as const satisfies Record<string, PhotoMeta>;
@@ -138,12 +240,36 @@ export function selectServiceKeys(serviceSlug: string, exclude: PhotoKey[] = [])
   const relevant = ALL_PHOTO_KEYS.filter(
     (k) => meta(k).serviceRelevance.includes(serviceSlug) && !exclude.includes(k)
   );
-  // A thin library falls back to the general pool rather than an empty
-  // strip — reuse is the honest expectation under ~20 photos.
   return relevant.length > 0 ? relevant : ALL_PHOTO_KEYS.filter((k) => !exclude.includes(k));
 }
 
 /** The real before/after pair — the site's one signature transformation. */
 export function getBeforeAfterPair(): { before: PhotoMeta; after: PhotoMeta } {
   return { before: PHOTO_REGISTRY['topiary-before'], after: PHOTO_REGISTRY['topiary-after'] };
+}
+
+/** The homepage-row "main" photo for a service, per the operator's own main/page split. */
+export function getServiceMainPhoto(slug: string): PhotoMeta | undefined {
+  const map: Record<string, PhotoKey> = {
+    'hedge-tree-trimming': 'hedge-trimming-pool-main',
+    'landscape-design': 'landscape-design-mulch-island-main',
+    mowing: 'mowing-trailer-main',
+    'mulch-planting': 'mulch-planting-palms-main',
+    'palm-tree-pruning': 'palm-pruning-action-main',
+  };
+  const key = map[slug];
+  return key ? PHOTO_REGISTRY[key] : undefined;
+}
+
+/** The service-page hero photo, per the operator's own main/page split. */
+export function getServicePagePhoto(slug: string): PhotoMeta | undefined {
+  const map: Record<string, PhotoKey> = {
+    'hedge-tree-trimming': 'hedge-trimming-curbside-page',
+    'landscape-design': 'landscape-design-planting-crew-page',
+    mowing: 'mowing-fresh-lawn-page',
+    'mulch-planting': 'mulch-planting-foundation-bed-page',
+    'palm-tree-pruning': 'palm-pruning-framed-house-page',
+  };
+  const key = map[slug];
+  return key ? PHOTO_REGISTRY[key] : undefined;
 }
