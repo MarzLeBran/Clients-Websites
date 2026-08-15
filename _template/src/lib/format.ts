@@ -17,7 +17,7 @@ const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satu
 export function formatHours(hours: { day: string; open: string; close: string }[]): string[] {
   return [...hours]
     .sort((a, b) => DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day))
-    .map((h) => `${h.day}: ${h.open} – ${h.close}`);
+    .map((h) => (h.open && h.close ? `${h.day}: ${h.open} – ${h.close}` : `${h.day}: Closed`));
 }
 
 // Meta descriptions get silently truncated by Google past ~155 chars.

@@ -10,6 +10,21 @@
   --color-brand-primary:   #FF00FF; /* TODO(stage-4) */
   --color-brand-secondary: #FF00FF; /* TODO(stage-4) */
   --color-brand-accent:    #FF00FF; /* TODO(stage-4) */
+  /* Text guaranteed to pass AA when placed ON bg-brand-primary (buttons,
+     badges, filled chips). NOT the same as neutral-50/900 — a bright/light
+     brand-primary (neon greens, yellows) needs DARK text here even in an
+     otherwise dark-first theme, so this can't just alias neutral-50.
+     scripts/derive-tokens.py computes this correctly; keep it wired. */
+  --color-text-inverse:    #FF00FF; /* TODO(stage-4) */
+  /* Scheme-invariant ink colors. Unlike neutral-50/900 (which resolve to
+     "the light one" / "the dark one" of {text,surface} and FLIP which
+     concept that is between light and dark schemes), these always mean
+     the same thing regardless of scheme direction — use these for actual
+     body text and real functional borders, never neutral-900/100, or text
+     silently goes invisible the moment a client's scheme is dark-first. */
+  --color-text-primary:    #FF00FF; /* TODO(stage-4) */
+  --color-text-muted:      #FF00FF; /* TODO(stage-4) */
+  --color-border:          #FF00FF; /* TODO(stage-4) */
   --color-neutral-50:  #FF00FF; /* TODO(stage-4) */
   --color-neutral-100: #FF00FF; /* TODO(stage-4) */
   --color-neutral-900: #FF00FF; /* TODO(stage-4) */

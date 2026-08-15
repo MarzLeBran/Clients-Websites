@@ -14,6 +14,11 @@ export interface SiteConfig {
     legalName: string;
     displayName: string;
     tagline: string;
+    // Optional second-language rendering of `tagline`, shown alongside it
+    // (not a language switcher) when the client's own voice is genuinely
+    // bilingual — e.g. a real quote they use in both languages. Empty
+    // string when not applicable; never machine-translate to fill this in.
+    taglineSecondary: string;
     founded: string;
     licenseNumber: string;
     insuranceNote: string;
@@ -33,6 +38,11 @@ export interface SiteConfig {
     emergencyService: boolean;
   };
   areas: { city: string; state: string; slug: string; county?: string; blurb: string }[];
+  // Free-text fallback ("Brevard County, FL") used for areaServed schema and
+  // header/footer copy when `areas` is empty — common pre-launch, when a
+  // client has confirmed a general service region but not a ranked city
+  // list yet. Empty string is fine; just don't invent city names to fill it.
+  serviceAreaLabel: string;
   services: { name: string; slug: string; isPrimary: boolean; priceFrom?: number }[];
   social: {
     google: string;
@@ -78,6 +88,7 @@ export const site: SiteConfig = {
     legalName: '',
     displayName: '',
     tagline: '',
+    taglineSecondary: '',
     founded: '',
     licenseNumber: '',
     insuranceNote: '',
@@ -97,6 +108,7 @@ export const site: SiteConfig = {
     emergencyService: false,
   },
   areas: [],
+  serviceAreaLabel: '',
   services: [],
   social: {
     google: '',

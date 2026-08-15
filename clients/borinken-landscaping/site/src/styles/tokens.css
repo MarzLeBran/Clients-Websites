@@ -7,14 +7,22 @@
 */
 @theme {
   /* Color */
-  --color-brand-primary:   #4DBA1F;
-  --color-brand-secondary: #378616;
-  --color-brand-accent:    #73E045;
-  --color-neutral-50:  #FFFFFF;
-  --color-neutral-100: #262628;
-  --color-neutral-900: #0E0E10;
-  --color-surface:     #0E0E10;
-  --color-surface-alt: #1B1B1E;
+  --color-brand-primary:   #53FF0B;
+  --color-brand-secondary: #39C000;
+  --color-brand-accent:    #95FF68;
+  --color-text-inverse:    #14201A;
+  --color-text-primary:    #F3F5EE;
+  --color-text-muted:      #B0B5AE;
+  --color-border:          #687C63;
+  /* Direction D's motif accent — from the real flowers/mulch in the client's
+     own photos. Motif fills and dividers only (coquí mark, section rules) —
+     never body text or large fills; see brief/02-design-directions.md. */
+  --color-accent-warm:      #E8A33D;
+  --color-neutral-50:  #F3F5EE;
+  --color-neutral-100: #2A352F;
+  --color-neutral-900: #14201A;
+  --color-surface:     #14201A;
+  --color-surface-alt: #1E2E24;
   /* Decorative-only translucent lines (card/section borders, not
      information-bearing — never use where contrast actually matters, e.g.
      form input borders). Real functional borders still need a solid,
@@ -22,32 +30,39 @@
   --color-line:             rgb(255 255 255 / 0.09);
   --color-line-strong:      rgb(255 255 255 / 0.16);
   /* Translucent brand tints — badge backgrounds, focus glows, shadow glows */
-  --color-brand-tint:       rgb(77 186 31 / 0.14);
-  --color-brand-glow:       rgb(77 186 31 / 0.45);
+  --color-brand-tint:       rgb(83 255 11 / 0.14);
+  --color-brand-glow:       rgb(83 255 11 / 0.45);
 
-  /* Type families — self-host real faces and preload the display face at Stage 4 */
-  --font-display: system-ui, sans-serif;
-  --font-body:    system-ui, sans-serif;
-  --font-utility: ui-monospace, monospace;
+  /* Type families — Fraunces (warm slab-serif display, carries the
+     "meticulous, does the extra 10%" read and sets bilingual headlines with
+     more warmth than a grotesque) + Work Sans (humanist body, clean
+     diacritics for Spanish copy) + IBM Plex Mono (utility — stats, phone
+     number, review counts). Self-hosted in public/fonts/, see global.css. */
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-body:    'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-utility: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* Type scale — real sizes/weights chosen per direction at Stage 4 */
-  --text-display-xl: 3rem;
-  --text-display-lg: 2.25rem;
-  --text-display-md: 1.5rem;
-  --text-display-sm: 1.25rem;
+  /* Type scale — Fraunces display sizes run large; Direction D's hero
+     headline needs real presence over the before/after slider. */
+  --text-display-xl: 3.5rem;
+  --text-display-lg: 2.5rem;
+  --text-display-md: 1.75rem;
+  --text-display-sm: 1.375rem;
   --text-body-lg: 1.125rem;
   --text-body: 1rem;
   --text-utility: 0.875rem;
   --text-mono-lg: 1.5rem;
-  --text-mono: 1rem;
+  --text-mono: 0.875rem;
 
   /* Spacing rhythm */
   --spacing-section: 5rem;
   --spacing-section-lg: 8rem;
 
-  /* Radii / shadow / motion */
-  --radius-card: 0.5rem;
-  --radius-button: 0.375rem;
+  /* Radii — tighter than the template default; Direction D's grounded,
+     utilitarian read (real trade, real work) wants crisp corners, not
+     soft SaaS rounding. */
+  --radius-card: 0.25rem;
+  --radius-button: 0.1875rem;
   --radius-badge: 999px;
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.1);
   /* Bigger, softer, negative-spread — reads as a floating card rather than

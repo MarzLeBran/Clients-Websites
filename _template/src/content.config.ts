@@ -70,6 +70,8 @@ const testimonials = defineCollection({
     date: z.coerce.date().optional(),
     // Gates AggregateRating schema eligibility — never default this true.
     firstParty: z.boolean(),
+    // A real, verbatim reply from the owner — optional, never fabricated.
+    ownerReply: z.string().optional(),
   }),
 });
 

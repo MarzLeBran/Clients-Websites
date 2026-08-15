@@ -1,55 +1,119 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/ui/SectionHeading.astro';
 import CTAButton from '../components/ui/CTAButton.astro';
-import ServiceCard from '../components/ui/ServiceCard.astro';
+import BeforeAfterSlider from '../components/ui/BeforeAfterSlider.astro';
+import CoquiMark from '../components/ui/CoquiMark.astro';
 import ReviewCard from '../components/ui/ReviewCard.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
 import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
 import { site } from '../config/site.config';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { PHOTO_REGISTRY, getBeforeAfterPair } from '../lib/photos';
 
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-// Add-ons live on the services index as cards; the homepage grid links only
-// to services that have real pages.
-const pageServices = services.filter((s) => s.data.serviceTier !== 'addon');
-const testimonials = (await getCollection('testimonials')).slice(0, 3);
+const testimonials = await getCollection('testimonials');
+const { before, after } = getBeforeAfterPair();
+// Explicit, non-repeating assignment — the library only has 5 real photos,
+// so each service row gets a distinct one on purpose rather than a modulo
+// pattern that can silently duplicate one photo across two rows.
+const servicePhotoBySlug: Record<string, (typeof PHOTO_REGISTRY)[keyof typeof PHOTO_REGISTRY]> = {
+  mowing: PHOTO_REGISTRY['hero-crew-trimming'],
+  'weed-eating': PHOTO_REGISTRY['trailer-rig'],
+  planting: PHOTO_REGISTRY['crew-shirt-logo'],
+  edging: PHOTO_REGISTRY['topiary-after'],
+};
 ---
 
-<BaseLayout title={site.seo.defaultTitle || site.business.displayName} description={site.seo.defaultDescription}>
+<BaseLayout title={site.seo.defaultTitle} description={site.seo.defaultDescription}>
   <LocalBusinessSchema slot="head" />
 
-  <section class="px-6 py-20 text-center md:py-32">
-    <h1 class="font-display text-display-xl font-bold">{site.business.tagline || site.business.displayName}</h1>
-    <p class="mx-auto mt-4 max-w-2xl text-body">{site.seo.defaultDescription}</p>
-    <div class="mt-8 flex justify-center gap-4">
-      <CTAButton href="/contact/">Get a Quote</CTAButton>
+  {/* Hero — Direction D's fused signature: the real before/after slider,
+      the coquí mark as its handle, a watermark bleeding off the edge, the
+      confirmed bilingual tagline over it. */}
+  <section class="relative">
+    <BeforeAfterSlider
+      beforeSrc={before.img.src}
+      afterSrc={after.img.src}
+      beforeAlt={before.alt}
+      afterAlt={after.alt}
+    >
+      <CoquiMark slot="handle" class="hero-enter h-11 w-11 rounded-badge bg-brand-primary p-2 text-text-inverse shadow-elevated" aria-hidden={false} />
+    </BeforeAfterSlider>
+
+    <CoquiMark class="pointer-events-none absolute -bottom-16 -right-16 h-80 w-80 text-brand-primary/10 md:h-96 md:w-96" />
+
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-surface via-surface/70 to-transparent px-6 pb-10 pt-24 text-center md:pb-14">
+      <h1 class="hero-enter font-display text-display-xl font-semibold text-text-primary">{site.business.tagline}</h1>
+      {site.business.taglineSecondary && (
+        <p class="hero-enter hero-enter-delay mt-1 font-display text-display-sm italic text-text-muted">{site.business.taglineSecondary}</p>
+      )}
+      <div class="hero-enter hero-enter-delay pointer-events-auto mt-6 flex flex-wrap justify-center gap-3">
+        <CTAButton href="/contact/" sweep>Get a free estimate</CTAButton>
+        <CTAButton href={`tel:${site.business.phoneE164}`} variant="secondary">Call {site.business.phone}</CTAButton>
+      </div>
     </div>
   </section>
 
-  {pageServices.length > 0 && (
-    <section class="px-6 py-16">
-      <SectionHeading eyebrow="Services" title="What we do" level="h2" />
-      <div class="grid gap-6 md:grid-cols-3">
-        {pageServices.map((s) => (
-          <ServiceCard name={s.data.name} slug={s.data.slug} shortDescription={s.data.shortDescription} priceFrom={s.data.priceFrom} />
-        ))}
+  {/* Services — alternating full-width photo rows, coquí-mark dividers. */}
+  <section class="px-6 py-16 md:py-20" id="services-preview">
+    <div class="mx-auto max-w-5xl">
+      <SectionHeading eyebrow="What we do" title="Four services, done right every time" level="h2" />
+      <div class="divide-y divide-line">
+        {services.map((s, i) => {
+          const photo = servicePhotoBySlug[s.data.slug];
+          return (
+            <div class={`grid items-center gap-8 py-10 md:grid-cols-2 ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}>
+              <div class="overflow-hidden rounded-card">
+                <Image src={photo.img} alt={photo.alt} width={640} height={480} class="aspect-[4/3] w-full object-cover" />
+              </div>
+              <div>
+                <CoquiMark class="h-5 w-5 text-brand-primary" />
+                <h3 class="mt-2 font-display text-display-md font-semibold">{s.data.name}</h3>
+                <p class="mt-2 max-w-prose text-body text-text-muted">{s.data.shortDescription}</p>
+                <a href={`/services/${s.data.slug}/`} class="mt-3 inline-block text-body font-medium text-brand-primary hover:opacity-80">
+                  Learn more →
+                </a>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
+  <section class="px-6 py-10 text-center">
+    <CTAButton href="/contact/" sweep>Get a free estimate</CTAButton>
+  </section>
+
+  {/* Reviews — real Google data, shown as visible text (see brief/03 for
+      why AggregateRating schema waits until more reviews are captured). */}
   {testimonials.length > 0 && (
-    <section class="px-6 py-16">
-      <SectionHeading eyebrow="Reviews" title="What customers say" level="h2" />
-      <div class="grid gap-6 md:grid-cols-3">
-        {testimonials.map((t) => (
-          <ReviewCard author={t.data.author} rating={t.data.rating} quote={t.data.quote} service={t.data.service} />
-        ))}
+    <section class="border-y border-line bg-surface-alt px-6 py-16 md:py-20" id="reviews-preview">
+      <div class="mx-auto max-w-5xl">
+        <div class="mb-10 flex flex-wrap items-baseline justify-between gap-3">
+          <SectionHeading eyebrow="Reviews" title="What customers say" level="h2" />
+          <p class="flex items-center gap-2 text-body text-text-muted">
+            <span class="text-brand-primary" aria-hidden="true">★★★★★</span>
+            <span class="font-utility font-medium">5.0 — 22 reviews on Google</span>
+          </p>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          {testimonials.map((t) => (
+            <ReviewCard
+              author={t.data.author}
+              rating={t.data.rating}
+              quote={t.data.quote}
+              ownerReply={t.data.ownerReply}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )}
 
-  <section class="bg-neutral-100 px-6 py-16 text-center">
+  <section class="px-6 py-20 text-center md:py-28">
     <SectionHeading title="Ready to get started?" level="h2" />
-    <CTAButton href="/contact/">Get a Quote</CTAButton>
+    <CTAButton href="/contact/" sweep>Get a free estimate</CTAButton>
   </section>
 </BaseLayout>

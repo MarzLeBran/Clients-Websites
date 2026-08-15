@@ -8,6 +8,12 @@ interface Props {
 }
 
 const { beforeSrc, afterSrc, beforeAlt, afterAlt } = Astro.props;
+// The `handle` slot is purely decorative (a brand-layer touch — a client's
+// signature mark standing in for the default divider) and never receives
+// the real interaction: the underlying <input type="range"> stays the
+// actual control for pointer, keyboard, and screen-reader users. Don't put
+// anything interactive inside the slot.
+const hasHandleSlot = Astro.slots.has('handle');
 ---
 
 <div class="before-after-slider relative aspect-video overflow-hidden rounded-card" data-before-after>
@@ -15,6 +21,12 @@ const { beforeSrc, afterSrc, beforeAlt, afterAlt } = Astro.props;
   <div class="clip-wrap absolute inset-0 h-full w-full overflow-hidden" style="width: 50%;">
     <img src={beforeSrc} alt={beforeAlt} class="h-full w-full max-w-none object-cover" style="width: 200%;" />
   </div>
+  <div class="divider-line pointer-events-none absolute inset-y-0 w-0.5 bg-brand-primary" style="left: 50%;"></div>
+  {hasHandleSlot && (
+    <div class="handle-visual pointer-events-none absolute top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center" style="left: 50%;">
+      <slot name="handle" />
+    </div>
+  )}
   <input
     type="range"
     min="0"
@@ -28,10 +40,14 @@ const { beforeSrc, afterSrc, beforeAlt, afterAlt } = Astro.props;
 <script>
   document.querySelectorAll<HTMLElement>('[data-before-after]').forEach((wrap) => {
     const clip = wrap.querySelector<HTMLElement>('.clip-wrap');
+    const divider = wrap.querySelector<HTMLElement>('.divider-line');
+    const handle = wrap.querySelector<HTMLElement>('.handle-visual');
     const range = wrap.querySelector<HTMLInputElement>('.range-input');
     if (!clip || !range) return;
     range.addEventListener('input', () => {
       clip.style.width = `${range.value}%`;
+      if (divider) divider.style.left = `${range.value}%`;
+      if (handle) handle.style.left = `${range.value}%`;
     });
   });
 </script>

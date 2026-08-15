@@ -4,9 +4,13 @@ interface Props {
   rating: number;
   quote: string;
   service?: string;
+  // A real reply from the owner, verbatim — not every review has one, and
+  // it's never fabricated to fill the slot. Genuine when present: it's the
+  // client's own voice responding to a real customer.
+  ownerReply?: string;
 }
 
-const { author, rating, quote, service } = Astro.props;
+const { author, rating, quote, service, ownerReply } = Astro.props;
 ---
 
 <figure class="rounded-card border border-line bg-surface-alt p-6 shadow-card">
@@ -17,4 +21,9 @@ const { author, rating, quote, service } = Astro.props;
   <figcaption class="mt-3 text-utility">
     {author}{service && ` — ${service}`}
   </figcaption>
+  {ownerReply && (
+    <div class="mt-4 border-l-2 border-brand-primary bg-brand-tint px-4 py-2.5 text-utility italic text-text-muted">
+      "{ownerReply}"
+    </div>
+  )}
 </figure>

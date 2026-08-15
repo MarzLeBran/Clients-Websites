@@ -14,7 +14,6 @@ import Logo from './Logo.astro';
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
 const navRest = [
-  { label: 'Service Areas', href: '/service-areas/' },
   { label: 'About', href: '/about/' },
   { label: 'Reviews', href: '/reviews/' },
   { label: 'FAQ', href: '/faq/' },
@@ -22,14 +21,15 @@ const navRest = [
 ];
 ---
 
+{/* Direction D: coquí mark centered, nav links split either side. Always
+    translucent + blurred (never fully solid at rest, never fully see-
+    through either — reads over any hero photo without a contrast fight),
+    goes fully solid once scrolled past the hero. */}
 <header
-  class="sticky top-0 z-40 border-b border-transparent transition-[background-color,box-shadow,border-color] duration-standard"
+  class="sticky top-0 z-40 border-b border-transparent bg-surface/75 backdrop-blur transition-[background-color,box-shadow,border-color] duration-standard"
   data-header
 >
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-    <a href="/" class="flex items-center">
-      <Logo />
-    </a>
+  <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-4">
     <nav class="hidden gap-6 md:flex" aria-label="Primary">
       <ul class="flex items-center gap-6">
         {services.length > 0 ? (
@@ -80,21 +80,31 @@ const navRest = [
         ) : (
           <li><a href="/services/" class="flex min-h-11 items-center text-body hover:text-brand-primary">Services</a></li>
         )}
-        {navRest.map((item) => (
-          <li><a href={item.href} class="flex min-h-11 items-center text-body hover:text-brand-primary">{item.label}</a></li>
-        ))}
+        <li><a href="/about/" class="flex min-h-11 items-center text-body hover:text-brand-primary">About</a></li>
       </ul>
     </nav>
-    <div class="flex items-center gap-3">
+
+    <a href="/" class="flex items-center justify-self-center" aria-label={site.business.displayName}>
+      <Logo markOnly class="text-brand-primary" />
+    </a>
+
+    <div class="flex items-center justify-end gap-5">
+      <nav class="hidden gap-5 md:flex" aria-label="Secondary">
+        <ul class="flex items-center gap-5">
+          {navRest.slice(1).map((item) => (
+            <li><a href={item.href} class="flex min-h-11 items-center text-body hover:text-brand-primary">{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
       {site.business.phone && (
-        <a href={telHref(site.business.phoneE164)} class="hidden text-body font-medium sm:block">
+        <a href={telHref(site.business.phoneE164)} class="hidden text-body font-medium lg:block">
           {formatPhone(site.business.phoneE164 || site.business.phone)}
         </a>
       )}
       <CTAButton href="/contact/">Get a Quote</CTAButton>
       <button
         type="button"
-        class="flex min-h-11 min-w-11 items-center justify-center rounded-button border border-neutral-100 md:hidden"
+        class="flex min-h-11 min-w-11 items-center justify-center rounded-button border border-border md:hidden"
         aria-expanded="false"
         aria-controls="mobile-nav"
         data-mobile-nav-toggle
@@ -107,7 +117,7 @@ const navRest = [
     </div>
   </div>
 
-  <nav id="mobile-nav" class="hidden border-t border-neutral-100 px-6 py-4 md:hidden" aria-label="Primary mobile" data-mobile-nav>
+  <nav id="mobile-nav" class="hidden border-t border-border px-6 py-4 md:hidden" aria-label="Primary mobile" data-mobile-nav>
     <ul class="flex flex-col gap-1">
       <li><a href="/services/" class="block min-h-11 py-2.5 text-body hover:text-brand-primary">Services</a></li>
       {navRest.map((item) => (
@@ -132,8 +142,6 @@ const navRest = [
   if (header) {
     const setScrolled = () => {
       const scrolled = window.scrollY > 12;
-      header.classList.toggle('bg-surface/95', scrolled);
-      header.classList.toggle('backdrop-blur', scrolled);
       header.classList.toggle('border-line', scrolled);
       header.classList.toggle('shadow-elevated', scrolled);
     };

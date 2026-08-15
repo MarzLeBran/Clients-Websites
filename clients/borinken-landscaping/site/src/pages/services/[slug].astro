@@ -7,7 +7,9 @@ import ServiceSchema from '../../components/schema/ServiceSchema.astro';
 import FAQPageSchema from '../../components/schema/FAQPageSchema.astro';
 import BreadcrumbListSchema from '../../components/schema/BreadcrumbListSchema.astro';
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import { site } from '../../config/site.config';
+import { PHOTO_REGISTRY, selectServiceKeys } from '../../lib/photos';
 
 export async function getStaticPaths() {
   const services = await getCollection('services');
@@ -25,9 +27,14 @@ const { service } = Astro.props;
 const { Content } = await render(service);
 const faqs = (await getCollection('faqs')).filter((f) => f.data.serviceSlug === service.data.slug);
 const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
+const heroKey = selectServiceKeys(service.data.slug)[0];
+const heroPhoto = heroKey ? PHOTO_REGISTRY[heroKey] : undefined;
 ---
 
-<BaseLayout title={`${service.data.name} | ${site.business.displayName}`} description={service.data.shortDescription}>
+<BaseLayout
+  title={`${service.data.name} in ${site.serviceAreaLabel} | ${site.business.displayName}`}
+  description={service.data.shortDescription}
+>
   <ServiceSchema slot="head" service={{ name: service.data.name, slug: service.data.slug, priceFrom: service.data.priceFrom }} />
   {faqs.length > 0 && <FAQPageSchema slot="head" faqs={faqs.map((f) => f.data)} />}
   <BreadcrumbListSchema
@@ -46,9 +53,15 @@ const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
       </div>
     </div>
 
-    {service.data.heroImage && (
+    {heroPhoto && (
       <div class="mx-auto mb-12 max-w-4xl px-6">
-        <img src={service.data.heroImage} alt="" class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated" />
+        <Image
+          src={heroPhoto.img}
+          alt={heroPhoto.alt}
+          width={1200}
+          height={675}
+          class="aspect-[16/9] w-full rounded-card border border-line object-cover shadow-elevated"
+        />
       </div>
     )}
 
@@ -58,7 +71,7 @@ const url = new URL(`/services/${service.data.slug}/`, Astro.site).toString();
       </div>
 
       <div class="mx-auto mt-10 max-w-3xl">
-        <CTAButton href="/contact/">Get a Quote for {service.data.name}</CTAButton>
+        <CTAButton href="/contact/" sweep>Get a free estimate for {service.data.name.toLowerCase()}</CTAButton>
       </div>
 
       {faqs.length > 0 && (

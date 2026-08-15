@@ -24,13 +24,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta property="og:type" content="website" />
     <slot name="head" />
   </head>
-  <body class="bg-surface text-neutral-900 font-body pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
+  <body class="bg-surface text-text-primary font-body pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
     <main id="main" tabindex="-1">

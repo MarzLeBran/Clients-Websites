@@ -1,6 +1,37 @@
 @import "tailwindcss";
 @import "./tokens.css";
 
+/* Self-hosted, per build-standards. Variable fonts (weight axis) — one
+   file each covers the full range this site uses. */
+@font-face {
+  font-family: 'Fraunces';
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/fraunces-variable.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Work Sans';
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/work-sans-variable.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/plex-mono-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/plex-mono-500.woff2') format('woff2');
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -24,7 +55,7 @@
   top: 0;
   z-index: 100;
   background: var(--color-brand-primary);
-  color: var(--color-neutral-50);
+  color: var(--color-text-inverse);
   font-weight: 500;
   padding: 0.75rem 1rem;
 }

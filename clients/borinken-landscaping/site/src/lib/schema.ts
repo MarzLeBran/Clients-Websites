@@ -34,13 +34,29 @@ export function buildLocalBusinessSchema(site: Site, type = 'LocalBusiness') {
             longitude: site.business.geo.lng,
           }
         : undefined,
-    areaServed: site.areas.map((a) => a.city),
-    openingHoursSpecification: site.business.hours.map((h) => ({
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: h.day,
-      opens: h.open,
-      closes: h.close,
-    })),
+    // A confirmed area/city list wins when it exists. Before that list is
+    // built (common pre-launch — a client may only have a county-level
+    // service area confirmed, not a ranked city list), fall back to the
+    // free-text service-area label rather than emitting an empty array,
+    // which is worse than no areaServed at all.
+    areaServed:
+      site.areas.length > 0
+        ? site.areas.map((a) => a.city)
+        : site.serviceAreaLabel
+          ? { '@type': 'AdministrativeArea', name: site.serviceAreaLabel }
+          : undefined,
+    // Closed days carry empty open/close strings (see lib/format.ts) —
+    // schema.org has no "closed" value for OpeningHoursSpecification, so
+    // those days are simply omitted rather than emitting invalid empty
+    // time strings.
+    openingHoursSpecification: site.business.hours
+      .filter((h) => h.open && h.close)
+      .map((h) => ({
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: h.day,
+        opens: h.open,
+        closes: h.close,
+      })),
     sameAs: Object.values(site.social).filter(Boolean),
   };
 }

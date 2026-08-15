@@ -14,12 +14,13 @@ interface Props {
 
 const { href, variant = 'primary', type = 'link', sweep = false } = Astro.props;
 const base = 'inline-flex items-center justify-center rounded-button px-5 py-2.5 min-h-11 text-body font-medium transition-all duration-standard';
-// Verify this pairing clears AA at Stage 4 — text-on-brand-primary contrast
-// depends entirely on the real colors chosen, not guaranteed by the token
-// names alone. See build-standards.
+// text-inverse (not neutral-50) is the token computed to pass AA specifically
+// against brand-primary — a bright/light brand color needs dark text here
+// even in a dark-first theme, which neutral-50 doesn't guarantee. See
+// build-standards and scripts/derive-tokens.py.
 const styles = variant === 'primary'
-  ? 'bg-brand-primary text-neutral-50 hover:opacity-90'
-  : 'border border-neutral-900 text-neutral-900 hover:bg-neutral-100';
+  ? 'bg-brand-primary text-inverse hover:opacity-90'
+  : 'border border-text-primary text-text-primary hover:bg-surface-alt';
 const sweepClass = sweep ? 'btn-sweep' : '';
 ---
 

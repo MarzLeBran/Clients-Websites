@@ -1,19 +1,25 @@
 import { getImage } from 'astro:assets';
+import heroCrewTrimming from '../assets/photos/hero-crew-trimming-topiary.jpg';
+import topiaryBefore from '../assets/photos/topiary-before.jpg';
+import topiaryAfter from '../assets/photos/topiary-after.jpg';
+import trailerRig from '../assets/photos/trailer-rig.jpg';
+import crewShirtLogo from '../assets/photos/crew-shirt-logo.jpg';
 
-// Central metadata registry for the client's Stage-0-audit-approved photos.
-// Filled at Stage 5: import each approved image and describe it honestly —
-// the audit grade gates entry (only "strong" photos belong here), so
-// anything selectable is already publishable. Pages select by metadata
-// (selectHeroKey / selectServiceKeys) instead of hardcoding keys. See a
-// client site for a fully populated example.
+// Central metadata registry of the Stage-0-audit-approved "usable" photos
+// (see brief/00-audit.md) — the audit grade gates entry: only photos rated
+// usable belong here. Grade C library (5 real photos) — reuse across pages
+// is expected and honest, not a bug. The hero photo is a composite: the
+// real photo pasted back pixel-exact over an AI-widened background after an
+// earlier outpaint attempt garbled the real logo text — see intake for the
+// full provenance. Everything else here is untouched, straight from the
+// client's own camera roll.
 
 export interface PhotoMeta {
   img: ImageMetadata;
   alt: string;
-  orientation: 'portrait' | 'landscape' | 'square'; // measure, don't guess
-  quality: 'strong'; // the registry gate — compromised photos never enter
-  subject: string; // e.g. 'exterior-after', 'interior-action', 'team'
-  /** Service slugs this photo genuinely depicts work for. */
+  orientation: 'portrait' | 'landscape' | 'square';
+  quality: 'strong';
+  subject: 'action-detail' | 'before' | 'after' | 'equipment';
   serviceRelevance: string[];
   heroCandidate: boolean;
   containsPeople: boolean;
@@ -21,7 +27,68 @@ export interface PhotoMeta {
   beforeAfter: boolean;
 }
 
-export const PHOTO_REGISTRY = {} as const satisfies Record<string, PhotoMeta>;
+export const PHOTO_REGISTRY = {
+  'hero-crew-trimming': {
+    img: heroCrewTrimming,
+    alt: 'Borinken Landscaping crew member trimming a topiary tree beside a flagpole in a Brevard County front yard',
+    orientation: 'landscape',
+    quality: 'strong',
+    subject: 'action-detail',
+    serviceRelevance: ['edging', 'mowing'],
+    heroCandidate: true,
+    containsPeople: true,
+    containsLogo: true,
+    beforeAfter: false,
+  },
+  'topiary-before': {
+    img: topiaryBefore,
+    alt: 'Overgrown, unshaped topiary tree before trimming',
+    orientation: 'portrait',
+    quality: 'strong',
+    subject: 'before',
+    serviceRelevance: ['edging'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: true,
+  },
+  'topiary-after': {
+    img: topiaryAfter,
+    alt: 'Same tree trimmed into a clean, rounded shape',
+    orientation: 'portrait',
+    quality: 'strong',
+    subject: 'after',
+    serviceRelevance: ['edging'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: false,
+    beforeAfter: true,
+  },
+  'trailer-rig': {
+    img: trailerRig,
+    alt: 'Borinken Landscaping branded trailer and truck parked at a job site',
+    orientation: 'portrait',
+    quality: 'strong',
+    subject: 'equipment',
+    serviceRelevance: ['mowing', 'weed-eating', 'planting', 'edging'],
+    heroCandidate: false,
+    containsPeople: false,
+    containsLogo: true,
+    beforeAfter: false,
+  },
+  'crew-shirt-logo': {
+    img: crewShirtLogo,
+    alt: 'Borinken Landscaping crew member wearing the branded work shirt',
+    orientation: 'portrait',
+    quality: 'strong',
+    subject: 'action-detail',
+    serviceRelevance: ['planting', 'weed-eating'],
+    heroCandidate: false,
+    containsPeople: true,
+    containsLogo: true,
+    beforeAfter: false,
+  },
+} as const satisfies Record<string, PhotoMeta>;
 
 export type PhotoKey = keyof typeof PHOTO_REGISTRY;
 export const ALL_PHOTO_KEYS = Object.keys(PHOTO_REGISTRY) as PhotoKey[];
@@ -74,4 +141,9 @@ export function selectServiceKeys(serviceSlug: string, exclude: PhotoKey[] = [])
   // A thin library falls back to the general pool rather than an empty
   // strip — reuse is the honest expectation under ~20 photos.
   return relevant.length > 0 ? relevant : ALL_PHOTO_KEYS.filter((k) => !exclude.includes(k));
+}
+
+/** The real before/after pair — the site's one signature transformation. */
+export function getBeforeAfterPair(): { before: PhotoMeta; after: PhotoMeta } {
+  return { before: PHOTO_REGISTRY['topiary-before'], after: PHOTO_REGISTRY['topiary-after'] };
 }

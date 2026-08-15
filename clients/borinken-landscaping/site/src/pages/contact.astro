@@ -5,13 +5,17 @@ import ContactForm from '../components/forms/ContactForm.astro';
 import BookingEmbed from '../components/booking/BookingEmbed.astro';
 import BreadcrumbListSchema from '../components/schema/BreadcrumbListSchema.astro';
 import { site } from '../config/site.config';
+import { formatHours, formatPhone, telHref } from '../lib/format';
 
 // FormPhoneFallback (rendered by BookingEmbed when provider is 'none')
 // already includes a ContactForm — don't duplicate it on this page.
 const showBookingEmbed = site.booking.provider !== 'none';
 ---
 
-<BaseLayout title={`Contact | ${site.business.displayName}`} description={`Get in touch with ${site.business.displayName}.`}>
+<BaseLayout
+  title={`Contact | ${site.business.displayName}`}
+  description={`Request a free estimate from ${site.business.displayName}, serving ${site.serviceAreaLabel}.`}
+>
   <BreadcrumbListSchema
     slot="head"
     crumbs={[
@@ -19,15 +23,50 @@ const showBookingEmbed = site.booking.provider !== 'none';
       { name: 'Contact', url: new URL('/contact/', Astro.site).toString() },
     ]}
   />
-  <section class="px-6 py-16">
-    <SectionHeading title="Contact" />
-    {showBookingEmbed ? (
-      <div class="grid gap-12 md:grid-cols-2">
-        <ContactForm />
-        <BookingEmbed />
+  <section class="px-6 py-16 md:py-20">
+    <div class="mx-auto max-w-5xl">
+      <SectionHeading eyebrow="Get in touch" title="Get a free estimate" />
+
+      <div class="grid gap-12 md:grid-cols-[1fr_1.3fr]">
+        <div>
+          <p class="text-body text-text-muted">
+            Call, text, or send the form below — we'll get back to you to schedule a free estimate.
+          </p>
+          <dl class="mt-8 space-y-6">
+            <div>
+              <dt class="text-utility uppercase tracking-wide text-text-muted">Phone</dt>
+              <dd class="mt-1">
+                <a href={telHref(site.business.phoneE164)} class="text-body-lg font-medium text-brand-primary">
+                  {formatPhone(site.business.phoneE164)}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-utility uppercase tracking-wide text-text-muted">Service area</dt>
+              <dd class="mt-1 text-body">{site.serviceAreaLabel}</dd>
+            </div>
+            {site.business.hours.length > 0 && (
+              <div>
+                <dt class="text-utility uppercase tracking-wide text-text-muted">Hours</dt>
+                <dd class="mt-1 text-body">
+                  <ul>
+                    {formatHours(site.business.hours).map((line) => <li>{line}</li>)}
+                  </ul>
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        {showBookingEmbed ? (
+          <div class="grid gap-12">
+            <ContactForm />
+            <BookingEmbed />
+          </div>
+        ) : (
+          <BookingEmbed />
+        )}
       </div>
-    ) : (
-      <BookingEmbed />
-    )}
+    </div>
   </section>
 </BaseLayout>
