@@ -1,0 +1,170 @@
+---
+// Manual (never autoplaying) review carousel — native CSS scroll-snap
+// track plus prev/next buttons, so it works with touch/trackpad swipe,
+// keyboard (focus + arrow-scroll), and screen readers without a JS
+// framework. Reviews are supporting trust content, not the primary
+// conversion path, so a carousel here is a reasonable exception to the
+// studio's usual "avoid carousels for primary content" guidance — and it
+// was an explicit client request.
+import ReviewCard from './ReviewCard.astro';
+
+interface Testimonial {
+  author: string;
+  rating: number;
+  quote: string;
+  service?: string;
+  ownerReply?: string;
+}
+
+interface Props {
+  testimonials: Testimonial[];
+}
+
+const { testimonials } = Astro.props;
+---
+
+<div class="reviews-carousel" role="region" aria-roledescription="carousel" aria-label="Customer reviews">
+  <div class="reviews-carousel-track" data-carousel-track tabindex="0">
+    {testimonials.map((t) => (
+      <div class="reviews-carousel-item" data-carousel-item>
+        <ReviewCard author={t.author} rating={t.rating} quote={t.quote} service={t.service} ownerReply={t.ownerReply} />
+      </div>
+    ))}
+  </div>
+  <div class="mt-5 flex items-center justify-center gap-3">
+    <button type="button" class="carousel-btn" data-carousel-prev aria-label="Previous reviews">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <div class="flex gap-1.5" data-carousel-dots></div>
+    <button type="button" class="carousel-btn" data-carousel-next aria-label="Next reviews">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .reviews-carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-block: 0.25rem;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+  .reviews-carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+  .reviews-carousel-item {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .reviews-carousel-item {
+      flex-basis: calc(50% - 0.625rem);
+    }
+  }
+  @media (min-width: 1024px) {
+    .reviews-carousel-item {
+      flex-basis: calc(33.333% - 0.834rem);
+    }
+  }
+  .carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-button);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+  .carousel-btn:hover {
+    background: var(--color-surface-alt);
+  }
+  .carousel-btn:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .carousel-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-border);
+    transition: background-color var(--duration-fast) var(--ease-standard), width var(--duration-fast) var(--ease-standard);
+  }
+  .carousel-dot[aria-current="true"] {
+    background: var(--color-brand-primary);
+    width: 1.25rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.reviews-carousel').forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>('[data-carousel-track]');
+    const items = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-item]'));
+    const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+    const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+    const dotsWrap = carousel.querySelector<HTMLElement>('[data-carousel-dots]');
+    if (!track || !prevBtn || !nextBtn || !dotsWrap || items.length === 0) return;
+
+    const visibleCount = () => {
+      const w = window.innerWidth;
+      return w >= 1024 ? 3 : w >= 640 ? 2 : 1;
+    };
+
+    // One dot per scroll "page" (group of `visibleCount` cards), not one
+    // per card — matches what a viewer actually sees move.
+    const pageCount = () => Math.max(1, Math.ceil(items.length / visibleCount()));
+
+    let dots: HTMLButtonElement[] = [];
+    const buildDots = () => {
+      dotsWrap.innerHTML = '';
+      dots = Array.from({ length: pageCount() }, (_, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel-dot';
+        dot.setAttribute('aria-label', `Go to review page ${i + 1}`);
+        dot.addEventListener('click', () => scrollToPage(i));
+        dotsWrap.appendChild(dot);
+        return dot;
+      });
+    };
+
+    const currentPage = () => {
+      const pageWidth = items[0].getBoundingClientRect().width + 20; // gap
+      return Math.round(track.scrollLeft / (pageWidth * visibleCount()));
+    };
+
+    const updateUI = () => {
+      const page = currentPage();
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      prevBtn.disabled = track.scrollLeft <= 4;
+      nextBtn.disabled = track.scrollLeft >= maxScroll - 4;
+      dots.forEach((d, i) => d.setAttribute('aria-current', String(i === page)));
+    };
+
+    const scrollToPage = (page: number) => {
+      const pageWidth = items[0].getBoundingClientRect().width + 20;
+      track.scrollTo({ left: page * pageWidth * visibleCount(), behavior: 'smooth' });
+    };
+
+    prevBtn.addEventListener('click', () => scrollToPage(Math.max(0, currentPage() - 1)));
+    nextBtn.addEventListener('click', () => scrollToPage(Math.min(pageCount() - 1, currentPage() + 1)));
+    track.addEventListener('scroll', () => window.requestAnimationFrame(updateUI), { passive: true });
+    window.addEventListener('resize', () => {
+      buildDots();
+      updateUI();
+    });
+
+    buildDots();
+    updateUI();
+  });
+</script>

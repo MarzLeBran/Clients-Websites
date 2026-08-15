@@ -32,7 +32,7 @@ const testimonials = await getCollection('testimonials');
       </div>
 
       {testimonials.length > 0 ? (
-        <div class="grid gap-6 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t) => (
             <ReviewCard
               author={t.data.author}
@@ -48,8 +48,9 @@ const testimonials = await getCollection('testimonials');
       )}
 
       <p class="mt-10 text-utility text-text-muted">
-        These are the reviews we've pulled directly from Google so far — the full 22-review, 5.0-star
-        record is real and verified on Borinken Landscaping's Google Business Profile.
+        These are {testimonials.length} of the 22 reviews we've pulled directly from Google — the
+        full 22-review, 5.0-star record is real and verified on Borinken Landscaping's Google
+        Business Profile.
       </p>
 
       <div class="mt-12 text-center">

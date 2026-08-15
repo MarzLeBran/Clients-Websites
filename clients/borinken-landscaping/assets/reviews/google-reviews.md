@@ -48,11 +48,17 @@ reviews above.
 - "Hiram worked overtime to finish the job on time and did an excellent job."
 - "I highly recommend him for any landscaping needs."
 
-## 19 additional reviews not retrieved
+## Update 2026-08-15 — 8 more full reviews captured
 
-The profile has 22 reviews total; only 3 were readable in full/near-full
-through the embedded browser view. The remaining 19 exist and are real,
-but their text was not captured — do not fabricate content for them. If
-more reviews are wanted for the site, either revisit the live listing
-directly (google.com/maps, search "Borinken Landscaping LLC") or ask
-Hiram to export/screenshot them from his Google Business Profile.
+Revisited the listing and expanded every truncated review. Now 10 of 22
+total reviews have full, real text (all 5-star — the business has no
+reviews below 5 stars, so this isn't cherry-picking):
+
+- Jennifer Wilkes, Lillian Rosario, D K, Teresa Salsagirl, b m, Lady Lilo,
+  Jessie Gilmor, Jessica Wyns, Milagros Aquino, TM
+
+All 10 are now in `site/src/content/testimonials/`. 12 of the 22 reviews
+are still not captured — do not fabricate content for them. If more are
+wanted later, revisit google.com/maps → search "Borinken Landscaping LLC"
+→ Reviews tab, or ask Hiram to export them from his Google Business
+Profile.

@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CTAButton from '../components/ui/CTAButton.astro';
 import BeforeAfterSlider from '../components/ui/BeforeAfterSlider.astro';
 import CoquiMark from '../components/ui/CoquiMark.astro';
-import ReviewCard from '../components/ui/ReviewCard.astro';
+import ReviewsCarousel from '../components/ui/ReviewsCarousel.astro';
 import SectionHeading from '../components/ui/SectionHeading.astro';
 import LocalBusinessSchema from '../components/schema/LocalBusinessSchema.astro';
 import { site } from '../config/site.config';
@@ -99,17 +99,15 @@ const { before, after } = getBeforeAfterPair();
             <span class="font-utility font-medium">5.0 — 22 reviews on Google</span>
           </p>
         </div>
-        <div class="grid gap-6 md:grid-cols-2">
-          {testimonials.map((t, i) => (
-            <div class="scroll-reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
-              <ReviewCard
-                author={t.data.author}
-                rating={t.data.rating}
-                quote={t.data.quote}
-                ownerReply={t.data.ownerReply}
-              />
-            </div>
-          ))}
+        <div class="scroll-reveal">
+          <ReviewsCarousel
+            testimonials={testimonials.map((t) => ({
+              author: t.data.author,
+              rating: t.data.rating,
+              quote: t.data.quote,
+              ownerReply: t.data.ownerReply,
+            }))}
+          />
         </div>
       </div>
     </section>
