@@ -16,7 +16,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,6 +29,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta property="og:type" content="website" />
+    {/* Runs before paint so .no-js's CSS fallback only ever applies when
+        JS is genuinely unavailable — never a flash of hidden content. */}
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+    </script>
     <slot name="head" />
   </head>
   <body class="bg-surface text-text-primary font-body pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
@@ -39,5 +44,25 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </main>
     <Footer />
     <MobileStickyBar />
+    <script>
+      // Reveal-on-scroll: one-time trigger, small block-level targets only
+      // (see tokens.css .scroll-reveal). Reduced-motion users and no-JS
+      // users see full content immediately via the CSS fallbacks.
+      const targets = document.querySelectorAll<HTMLElement>('.scroll-reveal');
+      if (targets.length) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
   </body>
 </html>

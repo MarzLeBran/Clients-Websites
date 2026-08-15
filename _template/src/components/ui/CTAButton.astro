@@ -14,12 +14,12 @@ interface Props {
 
 const { href, variant = 'primary', type = 'link', sweep = false } = Astro.props;
 const base = 'inline-flex items-center justify-center rounded-button px-5 py-2.5 min-h-11 text-body font-medium transition-all duration-standard';
-// text-inverse (not neutral-50) is the token computed to pass AA specifically
+// text-text-inverse (not neutral-50) is the token computed to pass AA specifically
 // against brand-primary — a bright/light brand color needs dark text here
 // even in a dark-first theme, which neutral-50 doesn't guarantee. See
 // build-standards and scripts/derive-tokens.py.
 const styles = variant === 'primary'
-  ? 'bg-brand-primary text-inverse hover:opacity-90'
+  ? 'bg-brand-primary text-text-inverse hover:opacity-90'
   : 'border border-text-primary text-text-primary hover:bg-surface-alt';
 const sweepClass = sweep ? 'btn-sweep' : '';
 ---

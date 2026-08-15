@@ -49,22 +49,27 @@ const { before, after } = getBeforeAfterPair();
   {/* Services — alternating full-width photo rows, coquí-mark dividers. */}
   <section class="px-6 py-16 md:py-20" id="services-preview">
     <div class="mx-auto max-w-5xl">
-      <SectionHeading eyebrow="What we do" title="Our services" level="h2" />
-      <p class="-mt-4 mb-8 max-w-prose text-body text-text-muted">
-        These are Hiram's main services — not every property needs all of them, and he also
-        takes on custom landscaping requests beyond this list. Tell him what you need.
-      </p>
+      <div class="scroll-reveal">
+        <SectionHeading eyebrow="What we do" title="Our services" level="h2" />
+        <p class="-mt-4 mb-8 max-w-prose text-body text-text-muted">
+          These are Hiram's main services — not every property needs all of them, and he also
+          takes on custom landscaping requests beyond this list. Tell him what you need.
+        </p>
+      </div>
       <div class="divide-y divide-line">
         {services.map((s, i) => {
           const photo = getServiceMainPhoto(s.data.slug);
           if (!photo) return null;
           return (
-            <div class={`grid items-center gap-8 py-10 md:grid-cols-2 ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}>
+            <div
+              class={`scroll-reveal grid items-center gap-8 py-10 md:grid-cols-2 ${i % 2 === 1 ? 'md:[&>*:first-child]:order-2' : ''}`}
+              style={`transition-delay: ${(i % 3) * 0.08}s`}
+            >
               <div class="overflow-hidden rounded-card">
                 <Image src={photo.img} alt={photo.alt} width={640} height={480} class="aspect-[4/3] w-full object-cover" />
               </div>
               <div>
-                <CoquiMark class="h-5 w-5 text-brand-primary" />
+                <CoquiMark class="h-7 w-7 text-brand-primary" />
                 <h3 class="mt-2 font-display text-display-md font-semibold">{s.data.name}</h3>
                 <p class="mt-2 max-w-prose text-body text-text-muted">{s.data.shortDescription}</p>
                 <a href={`/services/${s.data.slug}/`} class="mt-3 inline-block text-body font-medium text-brand-primary hover:opacity-80">
@@ -87,7 +92,7 @@ const { before, after } = getBeforeAfterPair();
   {testimonials.length > 0 && (
     <section class="border-y border-line bg-surface-alt px-6 py-16 md:py-20" id="reviews-preview">
       <div class="mx-auto max-w-5xl">
-        <div class="mb-10 flex flex-wrap items-baseline justify-between gap-3">
+        <div class="scroll-reveal mb-10 flex flex-wrap items-baseline justify-between gap-3">
           <SectionHeading eyebrow="Reviews" title="What customers say" level="h2" />
           <p class="flex items-center gap-2 text-body text-text-muted">
             <span class="text-brand-primary" aria-hidden="true">★★★★★</span>
@@ -95,20 +100,22 @@ const { before, after } = getBeforeAfterPair();
           </p>
         </div>
         <div class="grid gap-6 md:grid-cols-2">
-          {testimonials.map((t) => (
-            <ReviewCard
-              author={t.data.author}
-              rating={t.data.rating}
-              quote={t.data.quote}
-              ownerReply={t.data.ownerReply}
-            />
+          {testimonials.map((t, i) => (
+            <div class="scroll-reveal" style={`transition-delay: ${(i % 3) * 0.08}s`}>
+              <ReviewCard
+                author={t.data.author}
+                rating={t.data.rating}
+                quote={t.data.quote}
+                ownerReply={t.data.ownerReply}
+              />
+            </div>
           ))}
         </div>
       </div>
     </section>
   )}
 
-  <section class="px-6 py-20 text-center md:py-28">
+  <section class="scroll-reveal px-6 py-20 text-center md:py-28">
     <SectionHeading title="Ready to get started?" level="h2" />
     <CTAButton href="/contact/" sweep>Get a free estimate</CTAButton>
   </section>
